@@ -3,7 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("<strong>Телефон/Факс:</strong>+375 162 556868<br>","<strong>Телефон/Факс:</strong> +375 162 556868<br>"),
+    ("<html lang="en">","<html lang="tu">"),
 ]
 
 # Iterate over all files in the folder
