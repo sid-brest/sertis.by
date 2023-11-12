@@ -3,13 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("team.html\">Сотрудники","javascript:void(0)\">Сотрудники"),
-    ("testimonials.html\">Отзывы","javascript:void(0)\">Отзывы"),
-    ("services.html\">Подтверждение cоответствия","javascript:void(0)\">Подтверждение cоответствия"),
-    ("services.html\">Оценка системы производственного контроля","javascript:void(0)\">Оценка системы производственного контроля"),
-    ("services.html\">Оценка пригодности","javascript:void(0)\">Оценка пригодности"),
-    ("services.html\">Дополнительные услуги","javascript:void(0)\">Дополнительные услуги"),
-    ("<li><a href=\"pricing.html\">Цены</a></li>","<!-- <li><a href=\"pricing.html\">Цены</a></li> -->")
+    ("<li><a href=\"portfolio.html\">Права и обязанности заявителей</a></li>","<li><a href=\"prava.html\">Права и обязанности заявителей</a></li>"),
 ]
 
 # Iterate over all files in the folder
