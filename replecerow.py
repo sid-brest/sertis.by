@@ -3,10 +3,8 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("javascript:void(0)\">Сотрудники","team.html\">Сотрудники"),
-     
+    ("prava.html","rights.html"),
     
-
 ]
 
 # Iterate over all files in the folder
