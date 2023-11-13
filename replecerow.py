@@ -3,7 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("prava.html","rights.html"),
+    ("<span>Информация</span>","<span>Заказчику</span>"),
     
 ]
 
