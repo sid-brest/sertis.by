@@ -3,9 +3,13 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("<a href=\"portfolio.html\"><span>Заказчику</span>","<a href=\"#\"><span>Заказчику</span>"),
+    ("https://mas.gov.by/ru\"","http://mas.gov.by/ru\""),
     
 ]
+
+
+
+
 
 # Iterate over all files in the folder
 for filename in os.listdir(folder_path):
