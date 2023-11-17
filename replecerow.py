@@ -3,7 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("javascript:void(0)\">Новости","blog.html\">Новости"),
+    ("<strong>Телефон/Факс:</strong><a style=\"color:white;\" href=\"tel:+375162556868\">+375 162 556868</a><br><strong>Телефон/Факс:</strong><a style=\"color:white;\" href=\"tel:+375162557474\">+375 162 557474</a><br>","<strong>Телефон/Факс:&nbsp;</strong><a style=\"color:white;\" href=\"tel:+375162556868\">+375 162 556868</a><br><strong>Телефон/Факс:&nbsp;</strong><a style=\"color:white;\" href=\"tel:+375162557474\">+375 162 557474</a><br>"),
     
 ]
 
