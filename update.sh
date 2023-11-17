@@ -1,1 +1,2 @@
-git clone https://github.com/sid-brest/sertis.by.git /home/bitrix130/domains/sertis.by/public_html
+cd /home/bitrix130/domains/sertis.by/public_html
+git pull
