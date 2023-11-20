@@ -10,8 +10,6 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      # - name: Checkout code
-      #   uses: actions/checkout@v3
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
@@ -20,5 +18,5 @@ jobs:
       - name: Deploy to server
         run: |
           echo "Starting deployment..."
-          ssh -i ~/.ssh/deploy_rsa -o StrictHostKeyChecking=no bitrix130@sertis.by "cd /home/bitrix130/domains/sertis.by/public_html && git pull"
+          ssh -i ~/.ssh/deploy_rsa bitrix130@sertis.by "cd /home/bitrix130/domains/sertis.by/public_html && git pull"
           echo "Deployment completed."
