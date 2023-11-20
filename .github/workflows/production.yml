@@ -20,4 +20,4 @@ jobs:
 
       - name: Connect to remote host and run commands
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SERTIS_BY_SSH }} bitrix130@sertis.by 'cd /home/bitrix130/domains/sertis.by/public_html && git pull'
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SERTIS_BY_SSH }} bitrix130@www.sertis.by 'cd /home/bitrix130/domains/sertis.by/public_html && git pull'
