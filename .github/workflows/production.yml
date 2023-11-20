@@ -13,4 +13,6 @@ jobs:
         username: bitrix130
         key: ${{ secrets.SERTIS_BY_SSH }}
         port: 22
-        script: cd /home/bitrix130/domains/sertis.by/public_html && git pull
+        script: |
+          cd /home/bitrix130/domains/sertis.by/public_html
+          git pull
