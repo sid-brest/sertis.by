@@ -6,13 +6,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using key
+    - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: sertis.by
-        username: bitrix130
-        key: ${{ secrets.SERTIS_BY_SSH }}
-        port: 22
+        host: ${{ secrets.c }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
         script: |
           cd /home/bitrix130/domains/sertis.by/public_html
           git pull
