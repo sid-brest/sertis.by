@@ -1,32 +1,24 @@
-name: Deploy website
-on: push
+name: Deployment Workflow
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
 jobs:
-  # test:
-  #   ...
   deploy:
-    name: "Deploy to staging"
+    name: Deploy
     runs-on: ubuntu-latest
-    # needs: test
     steps:
-      - name: Configure SSH
+      # - name: Checkout code
+      #   uses: actions/checkout@v3
+      - name: Set up SSH key
         run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/staging.key
-          chmod 600 ~/.ssh/staging.key
-          cat >>~/.ssh/config <<END
-          Host staging
-            HostName $SSH_HOST
-            User $SSH_USER
-            IdentityFile ~/.ssh/staging.key
-            # StrictHostKeyChecking no
-          END
-        env:
-          SSH_USER: ${{ secrets.STAGING_SSH_USER }}
-          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
-
-      - name: cd to the dir
-        run: ssh staging 'cd /home/bitrix130/domains/sertis.by/public_html/'
-
-      - name: git pull
-        run: ssh staging 'git pull'
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_rsa
+          chmod 600 ~/.ssh/deploy_rsa
+      - name: Deploy to server
+        run: |
+          echo "Starting deployment..."
+          ssh -i ~/.ssh/deploy_rsa -o StrictHostKeyChecking=no bitrix130@sertis.by "cd /home/bitrix130/domains/sertis.by/public_html && git pull"
+          echo "Deployment completed."
