@@ -11,8 +11,8 @@ jobs:
         uses: garygrossgarten/github-action-ssh@release
         with:
           command: cd '/home/bitrix130/public_html' && git pull
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.SERNAME }}
+          host: sertis.by
+          username: bitrix130
           privateKey: ${{ secrets.KEY }}
         env:
           CI: true
