@@ -31,5 +31,5 @@ jobs:
       - name: Deploy to server
         run: |
           echo "Starting deployment..."
-          echo "yes" | ssh -i ~/.ssh/deploy_rsa -o StrictHostKeyChecking=no bitrix130@www.sertis.by "cd /home/bitrix130/domains/sertis.by/public_html && git pull"
+          echo "yes" | ssh -i ~/.ssh/deploy_rsa bitrix130@www.sertis.by "cd /home/bitrix130/domains/sertis.by/public_html && git pull"
           echo "Deployment completed."
