@@ -1,12 +1,11 @@
 name: Deploy website
-on: [push, pull_request]
+on: push
 jobs:
   # test:
   #   ...
   deploy:
     name: "Deploy to staging"
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     # needs: test
     steps:
       - name: Configure SSH
