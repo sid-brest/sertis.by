@@ -18,7 +18,7 @@ jobs:
             HostName $SSH_HOST
             User $SSH_USER
             IdentityFile ~/.ssh/staging.key
-            StrictHostKeyChecking no
+            # StrictHostKeyChecking no
           END
         env:
           SSH_USER: ${{ secrets.STAGING_SSH_USER }}
