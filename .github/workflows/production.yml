@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ls -a via OPEN SSH Private Key
+      - name: running commands via OPEN SSH Private Key
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: "cd /home/bitrix130/domains/sertis.by/public_html && git pull"
+          command: cd '/home/bitrix130/domains/sertis.by/public_html' && git pull
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SERNAME }}
           privateKey: ${{ secrets.KEY }}
