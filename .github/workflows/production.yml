@@ -1,18 +1,20 @@
-name: remote ssh command
-on: [push]
-jobs:
+name: Command via SSH
 
+on: push
+
+jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
+
     steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        port: ${{ secrets.PORT }}
-        script: |
-          cd /home/bitrix130/domains/sertis.by/public_html
-          git pull
+      - name: ls -a via OPEN SSH Private Key
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: "cd /home/bitrix130/domains/sertis.by/public_html && git pull"
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SERNAME }}
+          privateKey: ${{ secrets.KEY }}
+        env:
+          CI: true
+          
+          
