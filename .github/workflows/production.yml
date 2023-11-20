@@ -1,26 +1,16 @@
-name: Production Deployment
-
-on:
-  push:
-    branches:
-      - main
-
+name: remote ssh command
+on: [push]
 jobs:
-  deploy:
+
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.0
-        with:
-          ssh-private-key: ${{ secrets.SERTIS_BY_SSH }}
-
-      - name: Connect to remote host and run commands
-        run: |
-          ssh -o StrictHostKeyChecking=no \
-              -i ${{ secrets.SERTIS_BY_SSH }} \
-              bitrix130@sertis.by \
-              "cd /home/bitrix130/domains/sertis.by/public_html && git pull"
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: sertis.by
+        username: bitrix130
+        key: ${{ secrets.SERTIS_BY_SSH }}
+        port: 22
+        script: cd /home/bitrix130/domains/sertis.by/public_html && git pull
