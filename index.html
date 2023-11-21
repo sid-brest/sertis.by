@@ -91,9 +91,36 @@
           </li>
           <li><a href="blog.html">Новости</a></li>
           <li><a href="contact.html">Контакты</a></li>
-          <li><a href="tel:+375162556868" class="getstarted"><strong>&#9743;&nbsp;</strong>+375 162 556868</a></li>
+          <li class="dropdown">
+            <a href="tel:+375162556868" class="getstarted" onclick="toggleMenu(event)">
+              <span>Связь с нами</span>
+            </a>
+            <ul id="options-menu" style="display: none;">
+              <li><a href="tel:+375162556868" target="_blank">Позвонить</a></li>
+              <li><a href="mailto:sertisbrest@yandex.ru" target="_blank">Написать письмо</a></li>
+              <li><a href="viber://pa?chatURI=viber://chat?number=375297782476" target="_blank">Сообщение в Viber</a></li>
+              <li><a href="https://t.me/sertisbrest" target="_blank">Сообщение в Telegram</a></li>
+              <li><a href="https://wa.me/375297782476" target="_blank">Сообщение в WhatsApp</a></li>
+            </ul>
+          </li>
+          <script>
+            function toggleMenu(event) {
+              event.preventDefault();
+              const menu = document.getElementById("options-menu");
+              menu.style.display = menu.style.display === "none" ? "block" : "none";
+            }
+
+            // Close the menu if clicking outside of it
+            document.addEventListener("click", function (event) {
+              const menu = document.getElementById("options-menu");
+              const target = event.target;
+              if (target.closest(".dropdown") === null) {
+                menu.style.display = "none";
+              }
+            });
+          </script>
         </ul>
-        
+
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
 
@@ -545,7 +572,9 @@
                 <br>
                 224004, Брест, Беларусь<br>
                 <br>
-                <strong>Телефон/Факс:&nbsp;</strong><a style="color:white;" href="tel:+375162556868">+375 162 556868</a><br><strong>Телефон/Факс:&nbsp;</strong><a style="color:white;" href="tel:+375162557474">+375 162 557474</a><br>
+                <strong>Телефон/Факс:&nbsp;</strong><a style="color:white;" href="tel:+375162556868">+375 162
+                  556868</a><br><strong>Телефон/Факс:&nbsp;</strong><a style="color:white;"
+                  href="tel:+375162557474">+375 162 557474</a><br>
                 <strong>Email:&nbsp;</strong><a style="color:white;"
                   href="mailto:sertisbrest@yandex.ru">sertisbrest@yandex.ru</a><br>
               </p>
