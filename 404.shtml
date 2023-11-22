@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Сертис - Ошибка 500</title>
+  <title>Сертис - Ошибка 404</title>
   <meta
     content="Республиканское дочернее унитарное научно-испытательное предприятие «Сертис» Инженерного республиканского унитарного предприятия «Белстройцентр» (РУП «Сертис» РУП «Белстройцентр»)  работает в области управления качеством в строительстве путем объединения в общий процесс элементов лицензирования,  сертификации,  лабораторных и контрольных испытаний совместно с органами Госстройнадзора и Госстандарта с 1993 года."
     name="description">
@@ -135,10 +135,10 @@
       <div class="container">
 
         <div class="d-flex justify-content-between align-items-center">
-          <h2>Ошибка 500</h2>
+          <h2>Ошибка 404</h2>
           <ol>
             <li><a href="index.html">Главная</a></li>
-            <li>Ошибка 500</li>
+            <li>Ошибка 404</li>
           </ol>
         </div>
 
@@ -149,7 +149,7 @@
     <section id="faq" class="faq">
       <div class="container">
         <div class="section-title">
-          <h1 style="text-align: center;">Внутрення ошибка сервера!</h1>
+          <h1 style="text-align: center;">Страница не найдена!</h1>
           <!-- <p>Frequently Asked Questions</p> -->
         </div>
       </div>
