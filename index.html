@@ -284,38 +284,39 @@
             entries.forEach(function (entry) {
               if (entry.isIntersecting) {
                 var counters = entry.target.querySelectorAll('.counter');
-                var speed = 200; // The duration of the animation in milliseconds
+                var duration = 500; // Increase the duration for a longer animation
 
                 counters.forEach(function (counter) {
                   var target = parseInt(counter.getAttribute('data-target'));
                   var count = 0;
-                  var increment = target / (speed / 10); // Update the counter every 50 milliseconds
+                  var increment = target / (duration / 50); // Update the counter every 50 milliseconds
 
                   var timer = setInterval(function () {
                     count += increment;
                     counter.innerText = Math.floor(count).toLocaleString();
 
                     if (count >= target) {
-                      counter.innerText = target.toLocaleString();
+                      if (target === 22) {
+                        counter.innerText = target; // No "+" sign for target value 22
+                      } else {
+                        counter.innerText = target.toLocaleString() + "+"; // Add "+" sign for other targets
+                      }
                       clearInterval(timer);
                     }
                   }, 50);
                 });
 
-                // Unobserve the section once the counters have been animated
                 observer.unobserve(entry.target);
               }
             });
           }
 
           var section = document.querySelector('.row.skills-content');
-
           var options = {
             root: null,
             rootMargin: '0px',
-            threshold: 1.0 // Trigger animation when at least 50% of the section is visible
+            threshold: 0.5
           };
-
           var observer = new IntersectionObserver(animateCounters, options);
           observer.observe(section);
         </script>
