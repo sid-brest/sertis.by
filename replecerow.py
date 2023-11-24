@@ -3,9 +3,8 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("sample_ts_declaration .docx","sample_ts_declaration.docx"),
-    
-    
+    ("<!-- /Yandex.Metrika counter -->","<!-- /Yandex.Metrika counter --><meta name=\"yandex-verification\" content=\"66f652a97dbe60de\" />"),
+
     
 ]
 # Iterate over all files in the folder
