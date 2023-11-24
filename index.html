@@ -249,119 +249,98 @@
 
 
     <!-- ======= Our Skills Section ======= -->
-    <!-- <section id="skills" class="skills">
+    <section id="skills" class="skills">
       <div class="container">
 
-        <div class="section-title">
+        <!-- <div class="section-title">
           <p>Наши достижения</p>
-        </div>
+        </div> -->
 
         <div class="row skills-content">
-
-          <div class="col-lg-6">
-
-            <div class="progress">
-              <span class="skill">Удолетворенные клиенты<i class="val">100%</i></span>
-              <div class="progress-bar-wrap">
-                <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                  <span class="progress-bar-counter"></span>
-                </div>
-              </div>
-            </div>
-
-            <div class="progress">
-              <span class="skill">Штат экспертов-аудиторов<i class="val">90%</i></span>
-              <div class="progress-bar-wrap">
-                <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
-                </div>
-              </div>
-            </div>
-
-            <div class="progress">
-              <span class="skill">Точность и надежность результатов испытаний <i class="val">99%</i></span>
-              <div class="progress-bar-wrap">
-                <div class="progress-bar" role="progressbar" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100">
-                </div>
-              </div>
-            </div>
-
+          <div class="col text-center">
+            <h1><i class="bi bi-file-earmark-text"></i></h1>
+            <h2 class="display-4 counter" data-target="11000">0</h2>
+            <p>Выданных сертификатов</p>
           </div>
-
-          <div class="col-lg-6">
-
-            <div class="progress">
-              <span class="skill">Повторно обращаются к нам<i class="val">85%</i></span>
-              <div class="progress-bar-wrap">
-                <div class="progress-bar" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">
-                </div>
-              </div>
-            </div>
-
-            <div class="progress">
-              <span class="skill">Виды испытаний в области строительства<i class="val">80%</i></span>
-              <div class="progress-bar-wrap">
-                <div class="progress-bar" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
-                </div>
-              </div>
-            </div>
-
-            <div class="progress">
-              <span class="skill">Обеспечение соответствия стандартам<i class="val">100%</i></span>
-              <div class="progress-bar-wrap">
-                <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                </div>
-              </div>
-            </div>
-
+          <div class="col text-center">
+            <h1><i class="bi bi-card-checklist"></i></h1>
+            <h2 class="display-4 counter" data-target="100000">0</h2>
+            <p>Проведенных испытаний</p>
           </div>
-
+          <div class="col text-center">
+            <h1><i class="bi bi-file-earmark-medical"></i></h1>
+            <h2 class="display-4 counter" data-target="8500">0</h2>
+            <p>Зарегистрированных деклараций</p>
+          </div>
+          <div class="col text-center">
+            <h1><i class="bi bi-file-person"></i></h1>
+            <h2 class="display-4 counter" data-target="22">0</h2>
+            <p>Штат сотрудников</p>
+          </div>
         </div>
 
-      </div>
-    </section> -->
-    <!-- End Our Skills Section -->
+        <script>
+          function animateCounters(entries, observer) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                var counters = entry.target.querySelectorAll('.counter');
+                var speed = 200; // The duration of the animation in milliseconds
 
-    <!-- ======= Clients Section ======= -->
-    <section id="clients" class="clients section-bg">
-      <div class="container">
+                counters.forEach(function (counter) {
+                  var target = parseInt(counter.getAttribute('data-target'));
+                  var count = 0;
+                  var increment = target / (speed / 10); // Update the counter every 50 milliseconds
 
-        <div class="row">
+                  var timer = setInterval(function () {
+                    count += increment;
+                    counter.innerText = Math.floor(count).toLocaleString();
 
-          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/client-1.webp" class="img-fluid" alt="Санта">
-          </div>
+                    if (count >= target) {
+                      counter.innerText = target.toLocaleString();
+                      clearInterval(timer);
+                    }
+                  }, 50);
+                });
 
-          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/client-2.webp" class="img-fluid" alt="Диском">
-          </div>
+                // Unobserve the section once the counters have been animated
+                observer.unobserve(entry.target);
+              }
+            });
+          }
 
-          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/client-3.webp" class="img-fluid" alt="Брестжилстрой">
-          </div>
+          var section = document.querySelector('.row.skills-content');
 
-          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/client-4.webp" class="img-fluid" alt="Савушкин продукт">
-          </div>
+          var options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 1.0 // Trigger animation when at least 50% of the section is visible
+          };
 
-          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/client-5.webp" class="img-fluid" alt="БрестОблУкс">
-          </div>
+          var observer = new IntersectionObserver(animateCounters, options);
+          observer.observe(section);
+        </script>
 
-          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/client-6.webp" class="img-fluid" alt="Полесьежилстрой">
-          </div>
 
-        </div>
 
       </div>
     </section>
-    <!-- End Clients Section -->
+
+
+
+
+    <!-- End Our Skills Section -->
+
+
 
 
 
     <!-- ======= Services Section ======= -->
     <section id="services" class="services">
       <div class="container">
+
+        <div class="section-title">
+          <p>Наши преимущества</p>
+        </div>
 
         <div class="row">
           <div class="col-md-6">
@@ -413,6 +392,43 @@
 
       </div>
     </section><!-- End Services Section -->
+
+
+    <!-- ======= Clients Section ======= -->
+    <section id="clients" class="clients section-bg">
+      <div class="container">
+
+        <div class="row">
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-1.webp" class="img-fluid" alt="Санта">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-2.webp" class="img-fluid" alt="Диском">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-3.webp" class="img-fluid" alt="Брестжилстрой">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-4.webp" class="img-fluid" alt="Савушкин продукт">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-5.webp" class="img-fluid" alt="БрестОблУкс">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-6.webp" class="img-fluid" alt="Полесьежилстрой">
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+    <!-- End Clients Section -->
 
     <!-- ======= Portfolio Section ======= -->
     <!-- <section id="portfolio" class="portfolio">
@@ -663,7 +679,8 @@
               <li><i class="bx bx-chevron-right"></i> <a href="http://mas.gov.by/ru" target="_blank">Сайт Министерства
                   архитектуры и
                   строительства</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="https://holding.bsc.by" target="_blank">Белстройцентр-холдинг</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="https://holding.bsc.by"
+                  target="_blank">Белстройцентр-холдинг</a></li>
               <li><i class="bx bx-chevron-right"></i> <a href="https://bsc.by" target="_blank">Белстройцентр</a></li>
             </ul>
           </div>
