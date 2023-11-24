@@ -1,5 +1,4 @@
 robots.txt
 User-agent: *
-Disallow: /.git/
 Disallow: /.github/
-Sitemap: https://sertis.by/sitemap.xmls
+Sitemap: https://sertis.by/sitemap.xml
