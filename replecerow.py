@@ -3,7 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("href=\"#\">Бланки</a></li>","href=\"forms.html\">Бланки</a></li>"),
+    ("<li><a href=\"extra.html\">Дополнительные<br>услуги</a></li>","<li><a href=\"extra.html\">Дополнительные<br>услуги</a></li><li><a href=\"forms.html\">Бланки</a></li>"),
     
 ]
 # Iterate over all files in the folder
