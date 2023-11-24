@@ -3,8 +3,8 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("href=\"#\">Подтверждение соответствия","href=\"confirmation.html\">Подтверждение соответствия"),
-    ("href=\"#\">Оценка пригодности","href=\"suitability.html\">Оценка пригодности"),
+    ("sample_ts_declaration .docx","sample_ts_declaration.docx"),
+    
     
     
 ]
