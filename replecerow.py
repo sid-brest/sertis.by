@@ -3,7 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("viber://pa?chatURI=viber://chat?number=375297782476","viber://chat?number=%2B375297782476"),
+    ("<a href=\"#\">Бланки</a></li>","<a href=\"forms.html\">Бланки</a></li>"),
     
 ]
 # Iterate over all files in the folder
