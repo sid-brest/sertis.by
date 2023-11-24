@@ -3,12 +3,12 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("name=\"keywords\">","name=\"keywords\"><meta http-equiv=\"Content-Security-Policy\" content=\"upgrade-insecure-requests\">"),
+    ("href=\"#\">Бланки</a></li>","href=\"forms.html\">Бланки</a></li>"),
     
 ]
 # Iterate over all files in the folder
 for filename in os.listdir(folder_path):
-    if filename.endswith(".html", ".shtml"):
+    if filename.endswith(".html"):
         file_path = os.path.join(folder_path, filename)
         
         # Read the contents of the file
