@@ -3,7 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("<a href=\"https://www.facebook.com/pposertis\" class=\"facebook\"><i class=\"bx bxl-facebook\"></i></a>","<a href=\"https://www.facebook.com/pposertis\" class=\"facebook\"><i class=\"bx bxl-facebook\"></i></a><a href=\"https://www.linkedin.com/company/sertisbrest\" class=\"linkedin\"><i class=\"bx bxl-linkedin\"></i></a>"),
+    ("<meta name=\"yandex-verification\" content=\"66f652a97dbe60de\" />","<meta name=\"yandex-verification\" content=\"66f652a97dbe60de\" /><meta name=\"yandex-verification\" content=\"8857518120a69631\" />"),
 
     
 ]
