@@ -543,7 +543,68 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="https://app.embed.im/snow.js" defer></script><script type="text/javascript">if(location.protocol == "http:"){location.protocol = "https:"}</script>
+  <script src="https://app.embed.im/snow.js" defer></script>
+  <script type="text/javascript">if (location.protocol == "http:") { location.protocol = "https:" }</script>
+
+  <!------------------------------ Pop-up window  ------------------------------>
+
+  <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" style="color:#556270" id="infoModalLabel">Daily Information</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="color:#556270">
+          <p>Text information goes here...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#infoModal"
+    id="modalTriggerButton" style="display: none;"></button>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Check if modal should be shown today
+      if (!getCookie("modalShownToday")) {
+        // Show the modal
+        var modalTriggerButton = document.getElementById("modalTriggerButton");
+        var infoModal = new bootstrap.Modal(document.getElementById("infoModal"));
+        infoModal.show();
+
+        // Set the cookie to track that the modal has been shown today
+        setCookie("modalShownToday", true, 1);
+      }
+    });
+
+    // Function to get the value of a cookie
+    function getCookie(name) {
+      var cookies = document.cookie.split("; ");
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].split("=");
+        if (cookie[0] === name) {
+          return cookie[1];
+        }
+      }
+      return null;
+    }
+
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+  </script>
+
+  <!------------------------------ Pop-up window  ------------------------------>
 
 </body>
 
