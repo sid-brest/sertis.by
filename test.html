@@ -123,6 +123,14 @@
           </li>
           <li><a href="blog.html">Новости</a></li>
           <li><a href="contact.html">Контакты</a></li>
+          <li class="dropdown"><a href="#"><span>Язык</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li><a href="#">RU</a></li>
+              <li><a href="#">BY</a></li>
+              <li><a href="#">EN</a></li>
+            </ul>
+          </li>
+
           <li class="dropdown">
             <a href="tel:+375162556868" class="getstarted" onclick="toggleMenu(event)">
               <span>Связь с нами</span>
@@ -383,6 +391,58 @@
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
     <script src="https://app.embed.im/snow.js" defer></script>
+
+    <script>
+      $(document).ready(function () {
+        // Supported languages
+        var supportedLanguages = ['ru', 'by', 'en'];
+        // Set default language to Russian
+        var lang = 'ru';
+        // Detect browser or OS language
+        var userLang = navigator.language || navigator.userLanguage;
+        userLang = userLang.toLowerCase().substring(0, 2);
+        // If the detected language is supported, set it as the default language
+        if (supportedLanguages.includes(userLang)) {
+          lang = userLang;
+        }
+        // Function to update text based on selected language
+        function updateLanguage() {
+          // Update menu item text
+          var menuText = '';
+          if (lang === 'ru') {
+            menuText = 'Язык';
+          } else if (lang === 'by') {
+            menuText = 'Мова';
+          } else if (lang === 'en') {
+            menuText = 'Language';
+          }
+          $('.dropdown span').text(menuText);
+
+          // Update language options
+          $('.dropdown ul li').each(function (index) {
+            if (lang === 'ru') {
+              $(this).find('a').text(supportedLanguages[index].toUpperCase());
+            } else if (lang === 'by') {
+              $(this).find('a').text(supportedLanguages[index].toUpperCase());
+            } else if (lang === 'en') {
+              $(this).find('a').text(supportedLanguages[index].toUpperCase());
+            }
+          });
+
+          // Update content
+          $('.content').each(function () {
+            $(this).text($(this).data(lang));
+          });
+        }
+        // Event listener for language dropdown
+        $('.dropdown ul li a').click(function () {
+          lang = $(this).data('lang');
+          updateLanguage();
+        });
+        // Update language on page load
+        updateLanguage();
+      });
+    </script>
 
 </body>
 
