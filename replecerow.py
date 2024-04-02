@@ -3,7 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("<script src=\"https://app.embed.im/snow.js\" defer></script>", "<!-- <script src=\"https://app.embed.im/snow.js\" defer></script> -->"),
+    ("Swift code", "BIC"),
     
 
     
