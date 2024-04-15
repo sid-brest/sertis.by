@@ -3,7 +3,7 @@ import os
 # Define the folder path and the rows to replace
 folder_path = "./"
 rows_to_replace = [ 
-    ("Swift code", "BIC"),
+    ("href=\"tel:+375162556868\" class=\"getstarted\" onclick=\"toggleMenu(event)", "href=\"#\" class=\"getstarted\" onclick=\"toggleMenu(event)"),
     
 
     
