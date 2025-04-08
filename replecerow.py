@@ -2,25 +2,25 @@ import os
 
 # Define the folder path and the rows to replace
 folder_path = "./"
-rows_to_replace = [ 
-        ("<script src=\"https://app.embed.im/snow.js\" defer></script>", "<!-- <script src=\"https://app.embed.im/snow.js\" defer></script> -->"),
-    
-
-    
+rows_to_replace = [
+    (
+        '<li><a href="corruption.html">Противодействие коррупции</a></li>',
+        '<li><a href="corruption.html">Противодействие коррупции</a></li><li><a href="safety.html">Общественная работа</a></li>',
+    ),
 ]
 # Iterate over all files in the folder
 for filename in os.listdir(folder_path):
     if filename.endswith("html"):
         file_path = os.path.join(folder_path, filename)
-        
+
         # Read the contents of the file
         with open(file_path, "r", encoding="utf-8") as file:
             file_content = file.read()
-        
+
         # Replace the rows in the file content
         for old_row, new_row in rows_to_replace:
             file_content = file_content.replace(old_row, new_row)
-        
+
         # Write the modified content back to the file
         with open(file_path, "w", encoding="utf-8") as file:
             file.write(file_content)
