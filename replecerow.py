@@ -4,8 +4,8 @@ import os
 folder_path = "./"
 rows_to_replace = [
     (
-        '<li><a href="corruption.html">Противодействие коррупции</a></li>',
-        '<li><a href="corruption.html">Противодействие коррупции</a></li><li><a href="safety.html">Общественная работа</a></li>',
+        '39Л-3',
+        '39Л/1',
     ),
 ]
 # Iterate over all files in the folder
