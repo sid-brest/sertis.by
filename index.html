@@ -103,6 +103,21 @@
   </head>
 
   <body>
+    <!-- Countdown Banner -->
+    <div id="countdownBanner" class="countdown-banner">
+      <div class="countdown-content">
+        <span class="countdown-text">
+          <!-- Текст будет вставлен через JavaScript -->
+        </span>
+        <button
+          class="close-banner"
+          onclick="closeCountdownBanner()"
+          aria-label="Закрыть баннер"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>
     <!-- ======= Header ======= -->
     <header id="header" class="fixed-top d-flex align-items-center">
       <div class="container d-flex align-items-center">
@@ -1097,6 +1112,152 @@
             createConsentElement();
           }
         });
+      })();
+    </script>
+
+    <script>
+      // Countdown Banner Script
+      (function () {
+        // Проверяем, был ли баннер закрыт ранее
+        function isBannerClosed() {
+          try {
+            return localStorage.getItem("countdownBannerClosed") === "true";
+          } catch (e) {
+            return false;
+          }
+        }
+
+        // Функция для закрытия баннера
+        window.closeCountdownBanner = function () {
+          const banner = document.getElementById("countdownBanner");
+          if (banner) {
+            banner.classList.add("hidden");
+            document.body.classList.remove("banner-visible");
+
+            // Сохраняем состояние на 24 часа
+            try {
+              localStorage.setItem("countdownBannerClosed", "true");
+              localStorage.setItem("bannerClosedTime", new Date().getTime());
+            } catch (e) {
+              console.warn("LocalStorage недоступен");
+            }
+          }
+        };
+
+        // Функция для вычисления оставшихся дней
+        function calculateDaysRemaining() {
+          const targetDate = new Date("2025-09-08");
+          targetDate.setHours(0, 0, 0, 0); // Устанавливаем начало дня
+
+          const currentDate = new Date();
+          currentDate.setHours(0, 0, 0, 0); // Устанавливаем начало текущего дня
+
+          const timeDiff = targetDate - currentDate;
+          const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+          return daysRemaining;
+        }
+
+        // Функция для правильного склонения слова "день"
+        function getDaysWord(days) {
+          const lastDigit = days % 10;
+          const lastTwoDigits = days % 100;
+
+          if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return "дней";
+          }
+
+          if (lastDigit === 1) {
+            return "день";
+          } else if (lastDigit >= 2 && lastDigit <= 4) {
+            return "дня";
+          } else {
+            return "дней";
+          }
+        }
+
+        // Функция для обновления счетчика
+        function updateCountdown() {
+          const countdownText = document.querySelector(".countdown-text");
+
+          if (countdownText) {
+            const days = calculateDaysRemaining();
+
+            if (days > 0) {
+              // Показываем обратный отсчет
+              countdownText.innerHTML = `До введения Технического регламента «О безопасности строительных материалов и изделий» ТР 2025/013/ВY осталось <span id="daysCount">${days}</span> <span id="daysWord">${getDaysWord(
+                days
+              )}</span>`;
+
+              // Добавляем стили для выделения дней
+              const daysCountElement = document.getElementById("daysCount");
+              if (daysCountElement) {
+                daysCountElement.style.fontWeight = "bold";
+                daysCountElement.style.fontSize = "17px";
+                daysCountElement.style.color = "white";
+              }
+            } else if (days === 0) {
+              // 8 сентября - регламент вступил в силу
+              countdownText.innerHTML =
+                "Технический регламент «О безопасности строительных материалов и изделий» ТР 2025/013/ВY вступил в действие";
+            } else {
+              // Дата прошла - скрываем баннер
+              closeCountdownBanner();
+            }
+          }
+        }
+
+        // Проверяем, прошло ли 24 часа с момента закрытия
+        function shouldShowBanner() {
+          if (!isBannerClosed()) return true;
+
+          try {
+            const closedTime = localStorage.getItem("bannerClosedTime");
+            if (!closedTime) return true;
+
+            const currentTime = new Date().getTime();
+            const timePassed = currentTime - parseInt(closedTime);
+            const twentyFourHours = 24 * 60 * 60 * 1000;
+
+            if (timePassed > twentyFourHours) {
+              localStorage.removeItem("countdownBannerClosed");
+              localStorage.removeItem("bannerClosedTime");
+              return true;
+            }
+          } catch (e) {
+            return true;
+          }
+
+          return false;
+        }
+
+        // Инициализация при загрузке страницы
+        function initCountdownBanner() {
+          const banner = document.getElementById("countdownBanner");
+
+          if (banner && shouldShowBanner()) {
+            const days = calculateDaysRemaining();
+
+            // Показываем баннер если дата еще не прошла или это день вступления в силу
+            if (days >= 0) {
+              document.body.classList.add("banner-visible");
+              updateCountdown();
+
+              // Обновляем счетчик каждую минуту
+              setInterval(updateCountdown, 60000);
+            } else {
+              banner.classList.add("hidden");
+            }
+          } else if (banner) {
+            banner.classList.add("hidden");
+          }
+        }
+
+        // Запускаем инициализацию
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initCountdownBanner);
+        } else {
+          initCountdownBanner();
+        }
       })();
     </script>
   </body>
