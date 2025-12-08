@@ -4,8 +4,8 @@ import os
 folder_path = "./"
 rows_to_replace = [
     (
-        '<li><a href="safety.html">Общественная работа</a></li>',
-        '<li><a href="safety.html">Идеологическая и общественная работа</a></li>',
+        'sertisbrest@yandex.ru',
+        'mail@sertis.by',
     ),
 ]
 # Iterate over all files in the folder
