@@ -4,8 +4,8 @@ import os
 folder_path = "./"
 rows_to_replace = [
     (
-        '<!-- <script src="https://app.embed.im/snow.js" defer></script> -->',
         '<script src="https://app.embed.im/snow.js" defer></script>',
+        '<!-- <script src="https://app.embed.im/snow.js" defer></script> -->',
     ),
 ]
 # Iterate over all files in the folder
