@@ -441,7 +441,7 @@
       <div class="container" style="position: relative">
         <img
           src="assets/img/Logo-2026.webp"
-          alt="Logo 2026"
+          alt="Год белорусской женщины"
           style="
             position: absolute;
             left: 10px;
@@ -469,7 +469,7 @@
       <!-- Стили для мобильных устройств -->
       <style>
         @media (max-width: 768px) {
-          #footer .container > img[alt="Logo 2026"] {
+          #footer .container > img[alt="Год белорусской женщины"] {
             height: 80px !important;
             left: 10px !important;
             bottom: 5px !important;
