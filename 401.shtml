@@ -38,17 +38,17 @@
             return;
           }
         }
-        (k = e.createElement(t)),
+        ((k = e.createElement(t)),
           (a = e.getElementsByTagName(t)[0]),
           (k.async = 1),
           (k.src = r),
-          a.parentNode.insertBefore(k, a);
+          a.parentNode.insertBefore(k, a));
       })(
         window,
         document,
         "script",
         "https://mc.yandex.ru/metrika/tag.js",
-        "ym"
+        "ym",
       );
 
       ym(68353321, "init", {
@@ -128,7 +128,9 @@
                 <li><a href="certificates.html">Аттестаты и сертификаты</a></li>
                 <li><a href="team.html">Сотрудники</a></li>
                 <li><a href="corruption.html">Противодействие коррупции</a></li>
-                <li><a href="safety.html">Идеологическая и общественная работа</a></li>
+                <li>
+                  <a href="safety.html">Идеологическая и общественная работа</a>
+                </li>
                 <li><a href="procedure.html">Административные процедуры</a></li>
                 <li><a href="feedback.html">Отзывы</a></li>
               </ul>
@@ -436,8 +438,22 @@
         </div>
       </div>
 
-      <div class="container">
-        <div class="copyright">
+      <div class="container" style="position: relative">
+        <img
+          src="assets/img/Logo-2026.webp"
+          alt="Logo 2026"
+          style="
+            position: absolute;
+            left: 10px;
+            bottom: 0px;
+            height: 100px;
+            width: auto;
+            border-radius: 10px;
+            object-fit: contain;
+          "
+        />
+
+        <div class="copyright" style="text-align: center">
           &copy;<strong><span> Сертис</span></strong
           >. 2023
         </div>
@@ -449,6 +465,17 @@
           <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> -->
         </div>
       </div>
+
+      <!-- Стили для мобильных устройств -->
+      <style>
+        @media (max-width: 768px) {
+          #footer .container > img[alt="Logo 2026"] {
+            height: 80px !important;
+            left: 10px !important;
+            bottom: 5px !important;
+          }
+        }
+      </style>
 
       <a
         href="#"
