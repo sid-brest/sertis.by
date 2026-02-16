@@ -38,17 +38,17 @@
             return;
           }
         }
-        (k = e.createElement(t)),
+        ((k = e.createElement(t)),
           (a = e.getElementsByTagName(t)[0]),
           (k.async = 1),
           (k.src = r),
-          a.parentNode.insertBefore(k, a);
+          a.parentNode.insertBefore(k, a));
       })(
         window,
         document,
         "script",
         "https://mc.yandex.ru/metrika/tag.js",
-        "ym"
+        "ym",
       );
 
       ym(68353321, "init", {
@@ -100,6 +100,29 @@
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
+
+    <!-- Custom styles for second logo -->
+    <style>
+      .logo-2026 {
+        margin-left: 15px;
+        height: auto;
+        max-height: 60px;
+        border-radius: 8px;
+        object-fit: contain;
+      }
+
+      .logos-container {
+        display: flex;
+        align-items: center;
+      }
+
+      @media (max-width: 768px) {
+        .logo-2026 {
+          max-height: 45px;
+          margin-left: 10px;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -108,9 +131,16 @@
       <div class="container d-flex align-items-center">
         <!-- <h1 class="logo me-auto"><a href="index.html">Сертис</a></h1> -->
         <!-- Uncomment below if you prefer to use an image logo -->
-        <a href="index.html" class="logo me-auto"
-          ><img src="assets/img/logo.png" alt="" class="img-fluid"
-        /></a>
+        <div class="logos-container me-auto">
+          <a href="index.html" class="logo"
+            ><img src="assets/img/logo.png" alt="" class="img-fluid"
+          /></a>
+          <img
+            src="assets/img/Logo-2026.webp"
+            alt="2026"
+            class="logo-2026 img-fluid"
+          />
+        </div>
 
         <nav id="navbar" class="navbar">
           <ul>
@@ -128,7 +158,9 @@
                 <li><a href="certificates.html">Аттестаты и сертификаты</a></li>
                 <li><a href="team.html">Сотрудники</a></li>
                 <li><a href="corruption.html">Противодействие коррупции</a></li>
-                <li><a href="safety.html">Идеологическая и общественная работа</a></li>
+                <li>
+                  <a href="safety.html">Идеологическая и общественная работа</a>
+                </li>
                 <li><a href="procedure.html">Административные процедуры</a></li>
                 <li><a href="feedback.html">Отзывы</a></li>
               </ul>
