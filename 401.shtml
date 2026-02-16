@@ -438,24 +438,10 @@
         </div>
       </div>
 
-      <div class="container" style="position: relative">
-        <img
-          src="assets/img/Logo-2026.webp"
-          alt="Год белорусской женщины"
-          style="
-            position: absolute;
-            left: 10px;
-            bottom: 0px;
-            height: 100px;
-            width: auto;
-            border-radius: 10px;
-            object-fit: contain;
-          "
-        />
-
-        <div class="copyright" style="text-align: center">
+      <div class="container">
+        <div class="copyright">
           &copy;<strong><span> Сертис</span></strong
-          >. 2023 - 2026
+          >. 2023
         </div>
         <div class="credits">
           <!-- All the links in the footer should remain intact. -->
@@ -465,17 +451,6 @@
           <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> -->
         </div>
       </div>
-
-      <!-- Стили для мобильных устройств -->
-      <style>
-        @media (max-width: 768px) {
-          #footer .container > img[alt="Год белорусской женщины"] {
-            height: 80px !important;
-            left: 10px !important;
-            bottom: 5px !important;
-          }
-        }
-      </style>
 
       <a
         href="#"
