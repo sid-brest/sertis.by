@@ -125,25 +125,28 @@
         margin: 30px 0 40px 0;
       }
       .ideology-nav a {
-        display: inline-block;
-        background: #d9232d;
-        color: #fff !important;
-        padding: 10px 20px;
-        border-radius: 7px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8f9fa;
+        color: #333 !important;
+        padding: 10px 18px;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        border-left: 4px solid #d9232d;
         font-family: "Poppins", sans-serif;
         font-size: 14px;
         font-weight: 500;
         text-decoration: none;
         transition:
-          background 0.3s ease,
-          transform 0.15s ease;
+          background 0.2s ease,
+          color 0.2s ease;
         line-height: 1.4;
       }
       .ideology-nav a:hover {
-        background: #b71c1c;
-        color: #fff !important;
+        background: #fff0f0;
+        color: #d9232d !important;
         text-decoration: none;
-        transform: translateY(-1px);
       }
 
       /* ===== РАЗДЕЛЫ СТРАНИЦЫ ===== */
@@ -193,7 +196,7 @@
         font-size: 15px;
       }
       .ppo-table thead tr {
-        background: #d9232d;
+        background: #6c757d;
         color: #fff;
       }
       .ppo-table thead th {
@@ -380,7 +383,9 @@
                   <a href="tel:+375162556868" target="_blank">Позвонить</a>
                 </li>
                 <li>
-                  <a href="mailto:mail@sertis.by" target="_blank"
+                  <a
+                    href="/cdn-cgi/l/email-protection#472a262e2b07342235332e3469253e"
+                    target="_blank"
                     >Написать письмо</a
                   >
                 </li>
@@ -401,6 +406,10 @@
                 </li>
               </ul>
             </li>
+            <script
+              data-cfasync="false"
+              src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+            ></script>
             <script>
               function toggleMenu(event) {
                 event.preventDefault();
@@ -461,6 +470,63 @@
           <p
             style="
               font-size: 15px;
+              font-weight: 600;
+              color: #444;
+              margin-bottom: 6px;
+            "
+          >
+            Задачи идеологической работы:
+          </p>
+          <ul
+            style="
+              font-size: 15px;
+              line-height: 1.8;
+              color: #444;
+              margin-bottom: 20px;
+              padding-left: 22px;
+            "
+          >
+            <li>
+              информирование и разъяснение в трудовом коллективе основных
+              направлений внутренней и внешней политики государства;
+            </li>
+            <li>
+              укрепление нравственных и культурных традиций белорусского народа,
+              пропаганда семейных ценностей, здорового образа жизни;
+            </li>
+            <li>
+              формирование взглядов, убеждений, которые отражают идеалы
+              белорусского государства, патриотизм и национальное самосознание,
+              активную личностную позицию;
+            </li>
+            <li>
+              проведение мероприятий, посвящённых государственным,
+              общереспубликанским и профессиональным праздникам, вовлечение
+              работников в активное участие;
+            </li>
+            <li>обеспечение трудовой и исполнительской дисциплины;</li>
+            <li>
+              создание условий для полноценного труда и отдыха в трудовом
+              коллективе;
+            </li>
+            <li>
+              воспитание у работников чувства коллективной и индивидуальной
+              ответственности за репутацию предприятия, мобилизация работников
+              на решение поставленных задач;
+            </li>
+            <li>
+              обеспечение условий для реализации государственной молодёжной
+              политики;
+            </li>
+            <li>оказание социальной помощи работникам;</li>
+            <li>
+              организация в трудовом коллективе эффективной совместной работы
+              нанимателя и общественных организаций.
+            </li>
+          </ul>
+          <p
+            style="
+              font-size: 15px;
               line-height: 1.8;
               color: #444;
               margin-bottom: 24px;
@@ -475,13 +541,25 @@
 
           <!-- ===== НАВИГАЦИОННЫЕ КНОПКИ ===== -->
           <nav class="ideology-nav" aria-label="Разделы страницы">
-            <a href="#direktiva12">Директива №12</a>
-            <a href="#edinyy-den">Единый день информирования</a>
-            <a href="#simvolika">Государственная символика</a>
-            <a href="#bsj">ОО «Белорусский союз женщин»</a>
-            <a href="#profsoyuz">Первичная профсоюзная организация</a>
-            <a href="#god-zhenshchiny">Год белорусской женщины</a>
-            <a href="#dokumenty">Документы</a>
+            <a href="#direktiva12"
+              ><i class="bi bi-chevron-right"></i>Директива №12</a
+            >
+            <a href="#edinyy-den"
+              ><i class="bi bi-chevron-right"></i>Единый день информирования</a
+            >
+            <a href="#simvolika"
+              ><i class="bi bi-chevron-right"></i>Государственная символика</a
+            >
+            <a href="#obshch-obedinenia"
+              ><i class="bi bi-chevron-right"></i>Общественные объединения</a
+            >
+            <a href="#god-zhenshchiny"
+              ><i class="bi bi-chevron-right"></i>Год белорусской женщины</a
+            >
+            <a href="#profsoyuz"
+              ><i class="bi bi-chevron-right"></i>Первичная профсоюзная
+              организация</a
+            >
           </nav>
 
           <hr class="section-divider" />
@@ -558,11 +636,6 @@
           <div class="ideology-section" id="edinyy-den">
             <h2>Единый день информирования</h2>
 
-            <!-- 
-              ИЗОБРАЖЕНИЕ: поместите файл assets/img/ideology-edinyy-den.jpg
-              Рекомендуемый размер: 800×250 px.
-              Можно взять официальный баннер «Единого дня информирования».
-            -->
             <img
               src="assets/img/ideology-edinyy-den.jpg"
               alt="Единый день информирования"
@@ -571,8 +644,7 @@
             />
 
             <p>
-              Это одна из наиболее активных форм идеологической работы на
-              предприятии. Мероприятие проводится во исполнение
+              Мероприятие проводится во исполнение
               <strong
                 >Директивы Президента Республики Беларусь от 09.04.2025 №
                 12</strong
@@ -586,12 +658,6 @@
               актуальные вопросы деятельности государственных органов,
               политическая, экономическая, культурная повестка, итоги работы
               органов власти, общественно значимые события в стране и мире.
-            </p>
-            <p>
-              Формат <strong>открытого диалога</strong> позволяет работникам
-              предприятия получать информацию из первых уст, задавать вопросы
-              представителям органов власти и экспертам, участвовать в
-              обсуждении ключевых тем жизни страны и региона.
             </p>
             <a
               href="https://www.pac.by/about/scientific-activity/edinyy-den-informirovaniya/"
@@ -609,11 +675,6 @@
           <div class="ideology-section" id="simvolika">
             <h2>Государственная символика</h2>
 
-            <!-- 
-              ИЗОБРАЖЕНИЕ: поместите файл assets/img/ideology-simvolika.jpg
-              Рекомендуемый размер: 800×250 px.
-              Изображение с государственными символами Беларуси (герб, флаг).
-            -->
             <img
               src="assets/img/ideology-simvolika.jpg"
               alt="Государственная символика Республики Беларусь"
@@ -659,15 +720,14 @@
 
           <hr class="section-divider" />
 
-          <!-- ===== РАЗДЕЛ: ОО «БСЖ» ===== -->
-          <div class="ideology-section" id="bsj">
-            <h2>ОО «Белорусский союз женщин»</h2>
+          <!-- ===== РАЗДЕЛ: ОБЩЕСТВЕННЫЕ ОБЪЕДИНЕНИЯ ===== -->
+          <div class="ideology-section" id="obshch-obedinenia">
+            <h2>Общественные объединения</h2>
 
-            <!-- 
-              ИЗОБРАЖЕНИЕ: поместите файл assets/img/ideology-bsj.jpg
-              Рекомендуемый размер: 800×250 px.
-              Логотип или баннер ОО «Белорусский союз женщин».
-            -->
+            <h3 style="font-size: 18px; color: #556270; margin: 0 0 14px 0">
+              Первичная организация ОО «Белорусский союз женщин»
+            </h3>
+
             <img
               src="assets/img/ideology-bsj.jpg"
               alt="Белорусский союз женщин"
@@ -682,25 +742,49 @@
               >
               администрации Ленинского района г. Бреста.
             </p>
-            <p>
-              Организация объединяет женщин коллектива для участия в
-              общественной жизни, поддержки семейных ценностей, реализации
-              творческих и волонтёрских инициатив.
-            </p>
             <!-- Ссылка на первичку будет добавлена позже -->
+
+            <hr
+              style="
+                border: none;
+                border-top: 1px solid #e9ecef;
+                margin: 30px 0;
+              "
+            />
           </div>
 
           <hr class="section-divider" />
 
-          <!-- ===== РАЗДЕЛ: ПРОФСОЮЗНАЯ ОРГАНИЗАЦИЯ ===== -->
+          <!-- ===== РАЗДЕЛ: ГОД БЕЛОРУССКОЙ ЖЕНЩИНЫ ===== -->
+          <div class="ideology-section" id="god-zhenshchiny">
+            <h2>Год белорусской женщины</h2>
+
+
+            <div>
+              <img
+                src="assets/img/ideology-god-zhenshchiny.jpg"
+                alt="Год белорусской женщины 2026"
+                class="section-banner"
+                onerror="this.style.display = 'none'"
+              />
+              <p>
+                <strong
+                  >2026 год в Беларуси объявлен Годом белорусской
+                  женщины.</strong
+                >
+                Это решение подчёркивает особую роль женщин в развитии страны,
+                признание их вклада в экономику, социальную сферу, воспитание
+                подрастающего поколения и сохранение семейных ценностей.
+              </p>
+            </div>
+          </div>
+
+          <hr class="section-divider" />
+
+          <!-- ===== РАЗДЕЛ: ПЕРВИЧНАЯ ПРОФСОЮЗНАЯ ОРГАНИЗАЦИЯ ===== -->
           <div class="ideology-section" id="profsoyuz">
             <h2>Первичная профсоюзная организация</h2>
 
-            <!-- 
-              ИЗОБРАЖЕНИЕ: поместите файл assets/img/ideology-profsoyuz.jpg
-              Рекомендуемый размер: 800×200 px.
-              Логотип профсоюза или общее фото коллектива.
-            -->
             <img
               src="assets/img/ideology-profsoyuz.jpg"
               alt="Первичная профсоюзная организация РУП «Сертис»"
@@ -709,13 +793,11 @@
             />
 
             <p>
-              Первичная профсоюзная организация представляет и защищает трудовые
-              права и социально-экономические интересы работников, участвует в
-              регулировании трудовых отношений, организации оздоровления,
-              культурно-массовой и спортивной работы.
+              Представляет и защищает трудовые права и социально-экономические
+              интересы работников, участвует в регулировании трудовых отношений,
+              организации оздоровления, культурно-массовой и спортивной работы.
             </p>
 
-            <!-- Таблица состава профкома -->
             <table class="ppo-table">
               <caption>
                 ППО РУП «Сертис» РУП «Белстройцентр»
@@ -731,7 +813,7 @@
                 <tr>
                   <td>Председатель профкома</td>
                   <td>Корнейчук Мария Олеговна</td>
-                  <td><a href="tel:+375162557474">8(0162) 55-74-74</a></td>
+                  <td><a href="tel:+375162557474">(0162) 55-74-74</a></td>
                 </tr>
                 <tr>
                   <td>Казначей</td>
@@ -750,121 +832,13 @@
                 </tr>
               </tbody>
             </table>
-            <p style="font-size: 13px; color: #888">
+
+            <p style="font-size: 13px; color: #888; margin-top: 10px">
               Адрес: ул. Лейтенанта Рябцева, 39Л/1, 224701, г. Брест
               &nbsp;|&nbsp;
-              <a href="mailto:mail@sertis.by">mail@sertis.by</a> &nbsp;|&nbsp;
-              Факс: 8(0162) 55-74-74
+              <a href="mailto:sertis@mail.ru">sertis@mail.ru</a>
+              &nbsp;|&nbsp; Факс: 8(0162) 55-74-74
             </p>
-          </div>
-
-          <hr class="section-divider" />
-
-          <!-- ===== РАЗДЕЛ: ГОД БЕЛОРУССКОЙ ЖЕНЩИНЫ ===== -->
-          <div class="ideology-section" id="god-zhenshchiny">
-            <h2>Год белорусской женщины</h2>
-
-            <!-- 
-              ИЗОБРАЖЕНИЕ: поместите файл assets/img/ideology-god-zhenshchiny.jpg
-              Рекомендуемый размер: 800×300 px.
-              Официальный баннер «Год белорусской женщины 2026».
-            -->
-            <div class="year-banner-block">
-              <img
-                src="assets/img/ideology-god-zhenshchiny.jpg"
-                alt="Год белорусской женщины 2026"
-                class="section-banner"
-                onerror="this.style.display = 'none'"
-              />
-              <p>
-                <strong
-                  >2026 год в Беларуси
-                  <a
-                    href="https://pravo.by/document/?guid=12551&p0=P32600001"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >объявлен</a
-                  >
-                  Годом белорусской женщины.</strong
-                >
-                Это решение подчёркивает особую роль женщин в развитии страны,
-                признание их вклада в экономику, социальную сферу, воспитание
-                подрастающего поколения и сохранение семейных ценностей.
-              </p>
-              <p>
-                На предприятии трудятся замечательные женщины — инженеры,
-                экономисты, специалисты, руководители. Их профессионализм,
-                ответственность и неравнодушие — важная составляющая общего
-                успеха.
-              </p>
-              <p>
-                В течение года в коллективе проходят мероприятия, приуроченные к
-                этой дате:
-              </p>
-              <ul>
-                <li>
-                  чествование женщин-ветеранов труда и молодых специалистов;
-                </li>
-                <li>праздничные встречи, концерты, акции;</li>
-                <li>
-                  информационные проекты, рассказывающие о пути в профессии;
-                </li>
-                <li>благотворительные и волонтёрские инициативы.</li>
-              </ul>
-            </div>
-          </div>
-
-          <hr class="section-divider" />
-
-          <!-- ===== РАЗДЕЛ: ДОКУМЕНТЫ ===== -->
-          <div class="ideology-section" id="dokumenty">
-            <h2>Документы</h2>
-            <ul style="list-style: none; padding: 0">
-              <li style="margin-bottom: 10px">
-                <a
-                  href="files/ideologplan2026.pdf"
-                  target="_blank"
-                  class="doc-link-block"
-                >
-                  <i class="bi bi-file-earmark-pdf"></i>
-                  План информационно-идеологической работы РУП «Сертис» РУП
-                  «Белстройцентр» на 2026 год
-                </a>
-              </li>
-              <li style="margin-bottom: 10px">
-                <a
-                  href="files/DirektivaN1.pdf"
-                  target="_blank"
-                  class="doc-link-block"
-                >
-                  <i class="bi bi-file-earmark-pdf"></i>
-                  Директива Президента Республики Беларусь от 11 марта 2004 г.
-                  №1
-                </a>
-              </li>
-              <li style="margin-bottom: 10px">
-                <a
-                  href="files/Plan_DirektivyN1.pdf"
-                  target="_blank"
-                  class="doc-link-block"
-                >
-                  <i class="bi bi-file-earmark-pdf"></i>
-                  План основных организационных и практических мероприятий по
-                  обеспечению выполнения требований Директивы №1
-                </a>
-              </li>
-              <li style="margin-bottom: 10px">
-                <a
-                  href="files/DirektivaN12.pdf"
-                  target="_blank"
-                  class="doc-link-block"
-                >
-                  <i class="bi bi-file-earmark-pdf"></i>
-                  Директива Президента Республики Беларусь от 09.04.2025 №12 «О
-                  реализации основ идеологии белорусского государства»
-                </a>
-              </li>
-            </ul>
           </div>
         </div>
       </section>
