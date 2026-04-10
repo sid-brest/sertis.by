@@ -106,10 +106,23 @@
       #structure .container {
         padding-left: 0;
         padding-right: 0;
+        overflow: hidden;
       }
       #structure .section-title {
         padding-left: 15px;
         padding-right: 15px;
+      }
+      #structure .section-title p {
+        font-size: 14px !important;
+      }
+      .org-chart-wrap {
+        overflow: hidden;
+        padding: 10px 0 30px;
+      }
+      .org-chart-wrap svg {
+        display: block;
+        width: 100%;
+        max-width: 100%;
       }
       .nb {
         fill: #ffffff;
@@ -321,11 +334,6 @@
 
       <section id="structure" class="team section-bg">
         <div class="container">
-          <div class="section-title">
-            <h2>Структурная схема</h2>
-            <p>РУП «Сертис» РУП «Белстройцентр»</p>
-          </div>
-
           <div class="org-chart-wrap">
             <svg
               xmlns="http://www.w3.org/2000/svg"
