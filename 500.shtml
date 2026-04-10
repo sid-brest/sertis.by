@@ -134,11 +134,11 @@
           <a href="index.html" class="logo"
             ><img src="assets/img/logo.png" alt="" class="img-fluid"
           /></a>
-          <img
+<!--           <img
             src="assets/img/Logo-2026.webp"
             alt="2026"
             class="logo-2026 img-fluid"
-          />
+          /> -->
         </div>
 
         <nav id="navbar" class="navbar">
