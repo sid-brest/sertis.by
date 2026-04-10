@@ -97,34 +97,49 @@
       }
       .org-chart-wrap {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
         padding: 10px 0 30px;
       }
       .org-chart-wrap svg {
         display: block;
-        min-width: 680px;
+        min-width: 480px;
       }
-      .node-box {
+      .nb {
         fill: #ffffff;
-        stroke: #333333;
-        stroke-width: 1;
+        stroke: #555555;
+        stroke-width: 0.8;
       }
-      .node-text {
+      .nt {
         font-family: "Open Sans", sans-serif;
-        font-size: 12px;
+        font-size: 11px;
         fill: #333333;
         text-anchor: middle;
         dominant-baseline: central;
       }
-      .label-italic {
+      .nt-b {
         font-family: "Open Sans", sans-serif;
         font-size: 12px;
-        fill: #555555;
+        font-weight: 600;
+        fill: #333333;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+      .ni {
+        font-family: "Open Sans", sans-serif;
+        font-size: 10px;
+        fill: #666666;
         font-style: italic;
       }
-      .connector {
+      .ln {
         fill: none;
-        stroke: #555555;
-        stroke-width: 1;
+        stroke: #666666;
+        stroke-width: 0.8;
+      }
+      .db {
+        fill: none;
+        stroke: #666666;
+        stroke-width: 1.2;
+        stroke-dasharray: 6 3;
       }
     </style>
   </head>
@@ -307,14 +322,14 @@
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="100%"
-              viewBox="0 0 860 530"
-              style="min-width: 680px; display: block"
+              viewBox="0 0 680 480"
+              style="min-width: 480px; display: block"
             >
               <defs>
                 <marker
                   id="arr"
                   viewBox="0 0 10 10"
-                  refX="9"
+                  refX="8"
                   refY="5"
                   markerWidth="6"
                   markerHeight="6"
@@ -323,7 +338,7 @@
                   <path
                     d="M2 1L8 5L2 9"
                     fill="none"
-                    stroke="#555"
+                    stroke="#666"
                     stroke-width="1.5"
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -332,190 +347,142 @@
               </defs>
 
               <!-- ADMIN DASHED BOX -->
-              <rect
-                x="30"
-                y="10"
-                width="800"
-                height="248"
-                rx="6"
-                fill="none"
-                stroke="#555"
-                stroke-width="1.5"
-                stroke-dasharray="7 4"
-              />
-              <text x="46" y="28" class="label-italic">
+              <rect class="db" x="18" y="8" width="644" height="218" rx="5" />
+              <text class="ni" x="30" y="22">
                 Администрация РУП «Сертис» РУП «Белстройцентр»
               </text>
 
               <!-- Director -->
-              <rect x="330" y="38" width="200" height="40" class="node-box" />
-              <text
-                x="430"
-                y="59"
-                class="node-text"
-                style="font-size: 13px; font-weight: 600"
-              >
-                Директор
-              </text>
+              <rect class="nb" x="265" y="30" width="150" height="36" rx="4" />
+              <text class="nt-b" x="340" y="48">Директор</text>
 
-              <!-- Director down to H-bar -->
-              <line x1="430" y1="78" x2="430" y2="102" class="connector" />
-
-              <!-- Horizontal bar across 4 reports -->
-              <line x1="100" y1="102" x2="760" y2="102" class="connector" />
-
-              <!-- Drops to reports -->
+              <!-- Director → H-bar -->
+              <line class="ln" x1="340" y1="66" x2="340" y2="86" />
+              <line class="ln" x1="68" y1="86" x2="612" y2="86" />
               <line
-                x1="100"
-                y1="102"
-                x2="100"
-                y2="120"
-                class="connector"
+                class="ln"
+                x1="68"
+                y1="86"
+                x2="68"
+                y2="100"
                 marker-end="url(#arr)"
               />
               <line
-                x1="290"
-                y1="102"
-                x2="290"
-                y2="120"
-                class="connector"
+                class="ln"
+                x1="236"
+                y1="86"
+                x2="236"
+                y2="100"
                 marker-end="url(#arr)"
               />
               <line
-                x1="570"
-                y1="102"
-                x2="570"
-                y2="120"
-                class="connector"
+                class="ln"
+                x1="444"
+                y1="86"
+                x2="444"
+                y2="100"
                 marker-end="url(#arr)"
               />
               <line
-                x1="760"
-                y1="102"
-                x2="760"
-                y2="120"
-                class="connector"
+                class="ln"
+                x1="612"
+                y1="86"
+                x2="612"
+                y2="100"
                 marker-end="url(#arr)"
               />
 
               <!-- Главный бухгалтер -->
-              <rect x="42" y="120" width="116" height="52" class="node-box" />
-              <text x="100" y="138" class="node-text">Главный</text>
-              <text x="100" y="155" class="node-text">бухгалтер</text>
+              <rect class="nb" x="28" y="100" width="80" height="44" rx="4" />
+              <text class="nt" x="68" y="116">Главный</text>
+              <text class="nt" x="68" y="130">бухгалтер</text>
 
               <!-- Главный специалист -->
-              <rect x="190" y="120" width="200" height="64" class="node-box" />
-              <text x="290" y="138" class="node-text">Главный специалист</text>
-              <text x="290" y="154" class="node-text">по подтверждению</text>
-              <text x="290" y="170" class="node-text">соответствия</text>
+              <rect class="nb" x="152" y="100" width="168" height="56" rx="4" />
+              <text class="nt" x="236" y="116">Главный специалист</text>
+              <text class="nt" x="236" y="130">по подтверждению</text>
+              <text class="nt" x="236" y="144">соответствия</text>
 
               <!-- Главный инженер -->
-              <rect x="500" y="120" width="140" height="52" class="node-box" />
-              <text x="570" y="147" class="node-text">Главный инженер</text>
+              <rect class="nb" x="376" y="100" width="136" height="36" rx="4" />
+              <text class="nt" x="444" y="118">Главный инженер</text>
 
               <!-- Ведущий специалист -->
-              <rect x="702" y="120" width="116" height="52" class="node-box" />
-              <text x="760" y="138" class="node-text">Ведущий</text>
-              <text x="760" y="155" class="node-text">специалист</text>
+              <rect class="nb" x="568" y="100" width="88" height="44" rx="4" />
+              <text class="nt" x="612" y="116">Ведущий</text>
+              <text class="nt" x="612" y="130">специалист</text>
 
-              <!-- ARROW: Director → Руководитель СЦ
-                   From left edge of Director box → go left to x=18 →
-                   go down to y=368 (mid of SC head box) → go right into left edge of SC head box (x=72) -->
+              <!-- Director → Руководитель СЦ (до левой границы блока) -->
               <path
-                d="M330 58 L18 58 L18 368 L72 368"
-                class="connector"
+                class="ln"
+                d="M265 48 L12 48 L12 320 L52 320"
                 marker-end="url(#arr)"
               />
 
-              <!-- ARROW: Главный специалист → СЦ (down then left to top of SC box) -->
+              <!-- Главный специалист → СЦ (до пунктирной рамки) -->
               <path
-                d="M290 184 L290 272 L210 272 L210 308"
-                class="connector"
+                class="ln"
+                d="M236 156 L236 248 L170 248 L170 272"
                 marker-end="url(#arr)"
               />
 
-              <!-- ARROW: Главный специалист → ИЦ (below admin box, bypassing Главный инженер) -->
+              <!-- Главный специалист → ИЦ (до пунктирной рамки) -->
               <path
-                d="M290 184 L290 290 L650 290 L650 308"
-                class="connector"
+                class="ln"
+                d="M236 156 L236 262 L510 262 L510 272"
                 marker-end="url(#arr)"
               />
 
               <!-- SC DASHED BOX -->
-              <rect
-                x="50"
-                y="308"
-                width="330"
-                height="196"
-                rx="6"
-                fill="none"
-                stroke="#555"
-                stroke-width="1.5"
-                stroke-dasharray="7 4"
-              />
-              <text x="66" y="326" class="label-italic">
-                Сертификационный центр (СЦ)
-              </text>
+              <rect class="db" x="30" y="272" width="278" height="180" rx="5" />
+              <text class="ni" x="42" y="285">Сертификационный центр (СЦ)</text>
 
-              <!-- SC head box: x=72, y=338, width=286, height=60 → left edge x=72, mid y=368 ✓ -->
-              <rect x="72" y="338" width="286" height="60" class="node-box" />
-              <text x="215" y="358" class="node-text">
+              <rect class="nb" x="52" y="295" width="234" height="50" rx="4" />
+              <text class="nt" x="169" y="312">
                 Руководитель сертификационного
               </text>
-              <text x="215" y="378" class="node-text">
+              <text class="nt" x="169" y="328">
                 центра-заместитель директора
               </text>
 
-              <!-- SC arrow down -->
               <line
-                x1="215"
-                y1="398"
-                x2="215"
-                y2="418"
-                class="connector"
+                class="ln"
+                x1="169"
+                y1="345"
+                x2="169"
+                y2="362"
                 marker-end="url(#arr)"
               />
 
-              <!-- SC specialists -->
-              <rect x="122" y="418" width="186" height="40" class="node-box" />
-              <text x="215" y="441" class="node-text">Специалисты СЦ</text>
+              <rect class="nb" x="94" y="362" width="150" height="34" rx="4" />
+              <text class="nt" x="169" y="379">Специалисты СЦ</text>
 
               <!-- IC DASHED BOX -->
               <rect
-                x="480"
-                y="308"
-                width="330"
-                height="196"
-                rx="6"
-                fill="none"
-                stroke="#555"
-                stroke-width="1.5"
-                stroke-dasharray="7 4"
+                class="db"
+                x="372"
+                y="272"
+                width="278"
+                height="180"
+                rx="5"
               />
-              <text x="496" y="326" class="label-italic">
-                Испытательный центр (ИЦ)
-              </text>
+              <text class="ni" x="384" y="285">Испытательный центр (ИЦ)</text>
 
-              <!-- IC head -->
-              <rect x="502" y="338" width="286" height="60" class="node-box" />
-              <text x="645" y="358" class="node-text">Руководитель</text>
-              <text x="645" y="378" class="node-text">
-                испытательного центра
-              </text>
+              <rect class="nb" x="394" y="295" width="234" height="50" rx="4" />
+              <text class="nt" x="511" y="312">Руководитель</text>
+              <text class="nt" x="511" y="328">испытательного центра</text>
 
-              <!-- IC arrow down -->
               <line
-                x1="645"
-                y1="398"
-                x2="645"
-                y2="418"
-                class="connector"
+                class="ln"
+                x1="511"
+                y1="345"
+                x2="511"
+                y2="362"
                 marker-end="url(#arr)"
               />
 
-              <!-- IC specialists -->
-              <rect x="552" y="418" width="186" height="40" class="node-box" />
-              <text x="645" y="441" class="node-text">Специалисты ИЦ</text>
+              <rect class="nb" x="436" y="362" width="150" height="34" rx="4" />
+              <text class="nt" x="511" y="379">Специалисты ИЦ</text>
             </svg>
           </div>
         </div>
