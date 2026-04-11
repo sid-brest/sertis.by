@@ -95,14 +95,6 @@
           margin-left: 10px;
         }
       }
-      .org-chart-wrap {
-        padding: 10px 0 30px;
-      }
-      .org-chart-wrap svg {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-      }
       #structure .container {
         padding-left: 0;
         padding-right: 0;
@@ -116,13 +108,22 @@
         font-size: 14px !important;
       }
       .org-chart-wrap {
-        overflow: hidden;
+        overflow-x: auto;
+        overflow-y: hidden;
         padding: 10px 0 30px;
+        -webkit-overflow-scrolling: touch;
       }
       .org-chart-wrap svg {
         display: block;
         width: 100%;
         max-width: 100%;
+        min-width: 0;
+      }
+      @media (max-width: 600px) {
+        .org-chart-wrap svg {
+          width: 600px;
+          max-width: none;
+        }
       }
       .nb {
         fill: #ffffff;
@@ -338,7 +339,7 @@
               xmlns="http://www.w3.org/2000/svg"
               width="100%"
               viewBox="0 0 680 480"
-              style="min-width: 480px; display: block"
+              style="display: block"
             >
               <defs>
                 <marker
@@ -522,8 +523,14 @@
                     >+375 162 557474</a
                   ><br />
                   <strong>Email:&nbsp;</strong
-                  ><a style="color: white" href="mailto:mail@sertis.by"
-                    >mail@sertis.by</a
+                  ><a
+                    style="color: white"
+                    href="/cdn-cgi/l/email-protection#1b767a72775b687e696f7268357962"
+                    ><span
+                      class="__cf_email__"
+                      data-cfemail="c1aca0a8ad81b2a4b3b5a8b2efa3b8"
+                      >[email&#160;protected]</span
+                    ></a
                   ><br />
                 </p>
                 <div class="social-links mt-3">
