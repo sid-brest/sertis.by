@@ -7,8 +7,7 @@ folder_path = "./"
 # НАСТРОЙКА: старый и новый код для замены
 # ============================================================
 
-old_code = (
-    """<ul>
+old_code = """<ul>
                 <li><a href="team.html">Руководство</a></li>
                 <li><a href="structure.html">Структура</a></li>
                 <li><a href="about.html">О нас</a></li>
@@ -21,7 +20,6 @@ old_code = (
                 <li><a href="procedure.html">Административные процедуры</a></li>
                 <li><a href="feedback.html">Отзывы</a></li>
               </ul>"""
-)
 
 new_code = """<ul>
                 <li><a href="team.html">Руководство</a></li>
@@ -39,7 +37,9 @@ new_code = """<ul>
               </ul>"""
 
 # Уникальная строка для проверки, была ли замена уже сделана
-already_replaced_marker = """<li><a href="profsoyuz.html">Профсоюзная организация</a></li>"""
+already_replaced_marker = (
+    """<li><a href="profsoyuz.html">Профсоюзная организация</a></li>"""
+)
 
 # ============================================================
 

@@ -100,7 +100,7 @@
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
-    
+
     <!-- Custom styles for second logo -->
     <style>
       .logo-2026 {
@@ -110,12 +110,12 @@
         border-radius: 8px;
         object-fit: contain;
       }
-      
+
       .logos-container {
         display: flex;
         align-items: center;
       }
-      
+
       @media (max-width: 768px) {
         .logo-2026 {
           max-height: 45px;

@@ -150,35 +150,34 @@ for filename in os.listdir(folder_path):
     if filename.endswith(".html"):
         file_path = os.path.join(folder_path, filename)
         files_processed += 1
-        
+
         try:
             # Чтение содержимого файла
             with open(file_path, "r", encoding="utf-8") as file:
                 file_content = file.read()
-            
+
             # Проверка, содержит ли файл уже вставленный код
             if code_identifier in file_content:
                 print(f"Файл {filename} уже содержит вставленный код. Пропускаем.")
                 files_already_modified += 1
                 continue
-                
+
             # Проверка наличия начального и конечного маркера
             if start_marker in file_content and end_marker in file_content:
                 # Вставка кода между маркерами
                 modified_content = file_content.replace(
-                    start_marker, 
-                    start_marker + "\n" + code_to_insert
+                    start_marker, start_marker + "\n" + code_to_insert
                 )
-                
+
                 # Запись модифицированного содержимого обратно в файл
                 with open(file_path, "w", encoding="utf-8") as file:
                     file.write(modified_content)
-                
+
                 print(f"Код успешно вставлен в файл {filename}")
                 files_modified += 1
             else:
                 print(f"В файле {filename} не найдены требуемые маркеры. Пропускаем.")
-        
+
         except Exception as e:
             print(f"Ошибка при обработке файла {filename}: {str(e)}")
             errors += 1
