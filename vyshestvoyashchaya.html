@@ -669,20 +669,13 @@
 
     <!-- ====== СКРИПТ ПЕРЕКЛЮЧАТЕЛЯ ЯЗЫКА ====== -->
     <script>
-      // Инициализация Google Translate
+      // Загружаем Google Translate (нужен для работы cookie-метода)
       function googleTranslateElementInit() {
         new google.translate.TranslateElement(
-          {
-            pageLanguage: "ru",
-            includedLanguages: "be",
-            autoDisplay: false,
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-          },
+          { pageLanguage: "ru", includedLanguages: "be", autoDisplay: false },
           "google_translate_element",
         );
       }
-
-      // Загружаем скрипт Google Translate
       (function () {
         if (document.getElementById("gt-script")) return;
         var s = document.createElement("script");
@@ -693,70 +686,55 @@
         document.body.appendChild(s);
       })();
 
-      // Переключение языка
+      function setCookie(name, value) {
+        // Cookie нужно ставить и на текущий домен, и без домена (для localhost)
+        document.cookie = name + "=" + value + "; path=/;";
+        document.cookie =
+          name + "=" + value + "; path=/; domain=" + location.hostname + ";";
+      }
+
       function setLang(lang) {
         var btnRu = document.getElementById("btnRu");
         var btnBe = document.getElementById("btnBe");
 
         if (lang === "ru") {
-          // Сбрасываем cookie и перезагружаем
+          // Удаляем cookie перевода
+          setCookie("googtrans", "");
           document.cookie =
             "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           document.cookie =
             "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
             location.hostname +
             ";";
-          localStorage.removeItem("sertis_lang");
+          localStorage.setItem("sertis_lang", "ru");
           location.reload();
           return;
         }
 
         if (lang === "be") {
-          // Пробуем через select Google Translate
-          var attempts = 0;
-          var interval = setInterval(function () {
-            attempts++;
-            var select = document.querySelector(".goog-te-combo");
-            if (select) {
-              select.value = "be";
-              select.dispatchEvent(new Event("change"));
-              clearInterval(interval);
-            } else if (attempts >= 12) {
-              // Fallback: cookie-метод
-              clearInterval(interval);
-              document.cookie = "googtrans=/ru/be; path=/;";
-              document.cookie =
-                "googtrans=/ru/be; path=/; domain=" + location.hostname + ";";
-              location.reload();
-            }
-          }, 300);
+          // Ставим cookie и перезагружаем — Google Translate сам подхватит
+          setCookie("googtrans", "/ru/be");
+          localStorage.setItem("sertis_lang", "be");
+          location.reload(); // <-- ключевое: перезагрузка после установки cookie
+        }
+      }
 
-          // Сразу обновляем визуал кнопок
+      // Восстанавливаем визуал кнопок при загрузке
+      document.addEventListener("DOMContentLoaded", function () {
+        var btnRu = document.getElementById("btnRu");
+        var btnBe = document.getElementById("btnBe");
+        var isBe = document.cookie.indexOf("googtrans=/ru/be") !== -1;
+
+        if (isBe) {
           btnRu.classList.remove("active");
           btnRu.setAttribute("aria-pressed", "false");
           btnBe.classList.add("active");
           btnBe.setAttribute("aria-pressed", "true");
-          localStorage.setItem("sertis_lang", "be");
-        }
-      }
-
-      // Восстанавливаем состояние при загрузке
-      document.addEventListener("DOMContentLoaded", function () {
-        var saved = localStorage.getItem("sertis_lang");
-        if (
-          saved === "be" &&
-          document.cookie.indexOf("googtrans=/ru/be") !== -1
-        ) {
-          var btnRu = document.getElementById("btnRu");
-          var btnBe = document.getElementById("btnBe");
-          if (btnRu && btnBe) {
-            btnRu.classList.remove("active");
-            btnRu.setAttribute("aria-pressed", "false");
-            btnBe.classList.add("active");
-            btnBe.setAttribute("aria-pressed", "true");
-          }
-        } else if (saved === "be") {
-          localStorage.removeItem("sertis_lang");
+        } else {
+          btnRu.classList.add("active");
+          btnRu.setAttribute("aria-pressed", "true");
+          btnBe.classList.remove("active");
+          btnBe.setAttribute("aria-pressed", "false");
         }
       });
     </script>
