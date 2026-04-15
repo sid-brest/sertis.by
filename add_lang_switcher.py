@@ -244,7 +244,7 @@ files_no_nav = 0
 errors = 0
 
 for filename in sorted(os.listdir(folder_path)):
-    if not filename.endswith(".shtml"):
+    if not filename.endswith(".html"):
         continue
 
     file_path = os.path.join(folder_path, filename)

@@ -122,7 +122,68 @@
           margin-left: 10px;
         }
       }
-    </style>
+    
+      /* ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== */
+      .lang-switcher {
+        display: inline-flex;
+        align-items: center;
+        border: 1.5px solid rgba(213, 35, 45, 0.35);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-left: 14px;
+        flex-shrink: 0;
+        height: 32px;
+      }
+      .lang-switcher__btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: "Open Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 0 10px;
+        height: 100%;
+        color: #556270;
+        transition: background 0.18s, color 0.18s;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+      .lang-switcher__btn:hover {
+        background: rgba(213, 35, 45, 0.08);
+        color: #d9232d;
+      }
+      .lang-switcher__btn.active {
+        background: #d9232d;
+        color: #fff;
+      }
+      .lang-switcher__divider {
+        width: 1px;
+        height: 18px;
+        background: rgba(213, 35, 45, 0.3);
+        flex-shrink: 0;
+      }
+
+      /* Прячем всё лишнее от Google Translate */
+      .goog-te-banner-frame,
+      .goog-te-menu-frame {
+        display: none !important;
+      }
+      body {
+        top: 0 !important;
+      }
+      .skiptranslate {
+        visibility: hidden;
+        height: 0 !important;
+        overflow: hidden;
+      }
+      #google_translate_element {
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        visibility: hidden;
+      }
+</style>
   </head>
 
   <body>
@@ -308,6 +369,38 @@
 
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
+
+        <!-- ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== -->
+        <div
+          class="lang-switcher"
+          id="langSwitcher"
+          role="group"
+          aria-label="Выбор языка"
+        >
+          <button
+            class="lang-switcher__btn active"
+            id="btnRu"
+            onclick="setLang('ru')"
+            aria-pressed="true"
+            title="Русский язык"
+          >
+            RU
+          </button>
+          <span class="lang-switcher__divider" aria-hidden="true"></span>
+          <button
+            class="lang-switcher__btn"
+            id="btnBe"
+            onclick="setLang('be')"
+            aria-pressed="false"
+            title="Беларуская мова"
+          >
+            BE
+          </button>
+        </div>
+
+        <!-- Скрытый контейнер для Google Translate -->
+        <div id="google_translate_element"></div>
+
         <!-- .navbar -->
       </div>
     </header>
@@ -1399,5 +1492,67 @@
         }
       })();
     </script> -->
-  </body>
+  
+    <!-- ====== СКРИПТ ПЕРЕКЛЮЧАТЕЛЯ ЯЗЫКА ====== -->
+    <script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          { pageLanguage: "ru", includedLanguages: "be", autoDisplay: false },
+          "google_translate_element",
+        );
+      }
+      (function () {
+        if (document.getElementById("gt-script")) return;
+        var s = document.createElement("script");
+        s.id = "gt-script";
+        s.src =
+          "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+        s.async = true;
+        document.body.appendChild(s);
+      })();
+
+      function setCookie(name, value) {
+        document.cookie = name + "=" + value + "; path=/;";
+        document.cookie =
+          name + "=" + value + "; path=/; domain=" + location.hostname + ";";
+      }
+
+      function setLang(lang) {
+        if (lang === "ru") {
+          setCookie("googtrans", "");
+          document.cookie =
+            "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie =
+            "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
+            location.hostname + ";";
+          localStorage.setItem("sertis_lang", "ru");
+          location.reload();
+          return;
+        }
+        if (lang === "be") {
+          setCookie("googtrans", "/ru/be");
+          localStorage.setItem("sertis_lang", "be");
+          location.reload();
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var btnRu = document.getElementById("btnRu");
+        var btnBe = document.getElementById("btnBe");
+        var isBe = document.cookie.indexOf("googtrans=/ru/be") !== -1;
+        if (isBe) {
+          btnRu.classList.remove("active");
+          btnRu.setAttribute("aria-pressed", "false");
+          btnBe.classList.add("active");
+          btnBe.setAttribute("aria-pressed", "true");
+        } else {
+          btnRu.classList.add("active");
+          btnRu.setAttribute("aria-pressed", "true");
+          btnBe.classList.remove("active");
+          btnBe.setAttribute("aria-pressed", "false");
+        }
+      });
+    </script>
+
+</body>
 </html>
