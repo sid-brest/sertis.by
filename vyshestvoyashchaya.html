@@ -181,6 +181,66 @@
         color: #d9232d;
         flex-shrink: 0;
       }
+
+      /* ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== */
+      .lang-switcher {
+        display: inline-flex;
+        align-items: center;
+        border: 1.5px solid rgba(213, 35, 45, 0.35);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-left: 14px;
+        flex-shrink: 0;
+        height: 32px;
+      }
+      .lang-switcher__btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: "Open Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 0 10px;
+        height: 100%;
+        color: #556270;
+        transition:
+          background 0.18s,
+          color 0.18s;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+      .lang-switcher__btn:hover {
+        background: rgba(213, 35, 45, 0.08);
+        color: #d9232d;
+      }
+      .lang-switcher__btn.active {
+        background: #d9232d;
+        color: #fff;
+      }
+      .lang-switcher__divider {
+        width: 1px;
+        height: 18px;
+        background: rgba(213, 35, 45, 0.3);
+        flex-shrink: 0;
+      }
+
+      /* Прячем всё лишнее от Google Translate */
+      .goog-te-banner-frame,
+      .goog-te-menu-frame {
+        display: none !important;
+      }
+      body {
+        top: 0 !important;
+      }
+      .skiptranslate {
+        display: none !important;
+      }
+      #google_translate_element {
+        display: none !important;
+        visibility: hidden;
+        position: absolute;
+      }
     </style>
   </head>
 
@@ -215,7 +275,11 @@
                 <li><a href="profsoyuz.html">Профсоюзная организация</a></li>
                 <li><a href="idiology.html">Идеологическая работа</a></li>
                 <li><a href="corruption.html">Противодействие коррупции</a></li>
-                <li><a href="procedure.html">Обращение граждан и юридических лиц</a></li>
+                <li>
+                  <a href="procedure.html"
+                    >Обращение граждан и юридических лиц</a
+                  >
+                </li>
                 <li><a href="feedback.html">Отзывы</a></li>
                 <li><a href="requisites.html">Реквизиты</a></li>
               </ul>
@@ -338,6 +402,37 @@
           </ul>
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
+
+        <!-- ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== -->
+        <div
+          class="lang-switcher"
+          id="langSwitcher"
+          role="group"
+          aria-label="Выбор языка"
+        >
+          <button
+            class="lang-switcher__btn active"
+            id="btnRu"
+            onclick="setLang('ru')"
+            aria-pressed="true"
+            title="Русский язык"
+          >
+            RU
+          </button>
+          <span class="lang-switcher__divider" aria-hidden="true"></span>
+          <button
+            class="lang-switcher__btn"
+            id="btnBe"
+            onclick="setLang('be')"
+            aria-pressed="false"
+            title="Беларуская мова"
+          >
+            BE
+          </button>
+        </div>
+
+        <!-- Скрытый контейнер для Google Translate -->
+        <div id="google_translate_element"></div>
       </div>
     </header>
     <!-- End Header -->
@@ -571,5 +666,99 @@
       <script src="assets/vendor/php-email-form/validate.js"></script>
       <script src="assets/js/main.js"></script>
     </footer>
+
+    <!-- ====== СКРИПТ ПЕРЕКЛЮЧАТЕЛЯ ЯЗЫКА ====== -->
+    <script>
+      // Инициализация Google Translate
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "ru",
+            includedLanguages: "be",
+            autoDisplay: false,
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element",
+        );
+      }
+
+      // Загружаем скрипт Google Translate
+      (function () {
+        if (document.getElementById("gt-script")) return;
+        var s = document.createElement("script");
+        s.id = "gt-script";
+        s.src =
+          "https://translate.googleapis.com/translate_static/js/element/main.js?cb=googleTranslateElementInit";
+        s.async = true;
+        document.body.appendChild(s);
+      })();
+
+      // Переключение языка
+      function setLang(lang) {
+        var btnRu = document.getElementById("btnRu");
+        var btnBe = document.getElementById("btnBe");
+
+        if (lang === "ru") {
+          // Сбрасываем cookie и перезагружаем
+          document.cookie =
+            "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie =
+            "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
+            location.hostname +
+            ";";
+          localStorage.removeItem("sertis_lang");
+          location.reload();
+          return;
+        }
+
+        if (lang === "be") {
+          // Пробуем через select Google Translate
+          var attempts = 0;
+          var interval = setInterval(function () {
+            attempts++;
+            var select = document.querySelector(".goog-te-combo");
+            if (select) {
+              select.value = "be";
+              select.dispatchEvent(new Event("change"));
+              clearInterval(interval);
+            } else if (attempts >= 12) {
+              // Fallback: cookie-метод
+              clearInterval(interval);
+              document.cookie = "googtrans=/ru/be; path=/;";
+              document.cookie =
+                "googtrans=/ru/be; path=/; domain=" + location.hostname + ";";
+              location.reload();
+            }
+          }, 300);
+
+          // Сразу обновляем визуал кнопок
+          btnRu.classList.remove("active");
+          btnRu.setAttribute("aria-pressed", "false");
+          btnBe.classList.add("active");
+          btnBe.setAttribute("aria-pressed", "true");
+          localStorage.setItem("sertis_lang", "be");
+        }
+      }
+
+      // Восстанавливаем состояние при загрузке
+      document.addEventListener("DOMContentLoaded", function () {
+        var saved = localStorage.getItem("sertis_lang");
+        if (
+          saved === "be" &&
+          document.cookie.indexOf("googtrans=/ru/be") !== -1
+        ) {
+          var btnRu = document.getElementById("btnRu");
+          var btnBe = document.getElementById("btnBe");
+          if (btnRu && btnBe) {
+            btnRu.classList.remove("active");
+            btnRu.setAttribute("aria-pressed", "false");
+            btnBe.classList.add("active");
+            btnBe.setAttribute("aria-pressed", "true");
+          }
+        } else if (saved === "be") {
+          localStorage.removeItem("sertis_lang");
+        }
+      });
+    </script>
   </body>
 </html>
