@@ -4,8 +4,8 @@ import os
 folder_path = "./"
 rows_to_replace = [
     (
-        ". 2023-2026",
-        ". 2023 - 2026",
+        "Обращения граждан и юрлиц",
+        "Обращение граждан и юридических лиц",
     ),
 ]
 # Iterate over all files in the folder
