@@ -234,12 +234,15 @@
         top: 0 !important;
       }
       .skiptranslate {
-        display: none !important;
+        visibility: hidden;
+        height: 0 !important;
+        overflow: hidden;
       }
       #google_translate_element {
-        display: none !important;
-        visibility: hidden;
         position: absolute;
+        left: -9999px;
+        top: -9999px;
+        visibility: hidden;
       }
     </style>
   </head>
