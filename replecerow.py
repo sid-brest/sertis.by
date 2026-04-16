@@ -4,8 +4,8 @@ import os
 folder_path = "./"
 rows_to_replace = [
     (
-        "Обращения граждан и юрлиц",
-        "Обращение граждан и юридических лиц",
+        "ТР 2009/013/BY",
+        "TP 2025/013/BY",
     ),
 ]
 # Iterate over all files in the folder
