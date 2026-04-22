@@ -122,7 +122,7 @@
           margin-left: 10px;
         }
       }
-    
+
       /* ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== */
       .lang-switcher {
         display: inline-flex;
@@ -145,7 +145,9 @@
         padding: 0 10px;
         height: 100%;
         color: #556270;
-        transition: background 0.18s, color 0.18s;
+        transition:
+          background 0.18s,
+          color 0.18s;
         line-height: 1;
         text-transform: uppercase;
       }
@@ -183,7 +185,7 @@
         top: -9999px;
         visibility: hidden;
       }
-</style>
+    </style>
   </head>
 
   <body>
@@ -220,7 +222,11 @@
                 <li><a href="profsoyuz.html">Профсоюзная организация</a></li>
                 <li><a href="idiology.html">Идеологическая работа</a></li>
                 <li><a href="corruption.html">Противодействие коррупции</a></li>
-                <li><a href="procedure.html">Обращение граждан и юридических лиц</a></li>
+                <li>
+                  <a href="procedure.html"
+                    >Обращение граждан и юридических лиц</a
+                  >
+                </li>
                 <li><a href="feedback.html">Отзывы</a></li>
                 <li><a href="requisites.html">Реквизиты</a></li>
               </ul>
@@ -543,7 +549,7 @@
                 </li>
                 <li>
                   <a href="files/tr13i.pdf" target="_blank"
-                    >TP 2025/013/BY «Здания и сооружения, строительные материалы
+                    >TP 2009/013/BY «Здания и сооружения, строительные материалы
                     и изделия. Безопасность» (в области материалов для отделки
                     зданий и сооружений).</a
                   >
@@ -1008,11 +1014,11 @@
             Государственного комитета по стандартизации Республики Беларусь от
             15.02.2018 № 10 «Об изменении постановления Государственного
             комитета по стандартизации Республики Беларусь»; техническим
-            регламентом Республики Беларусь TP 2025/013/BY «Здания и сооружения,
-            строительные материалы и изделия. Безопасность».<br />
+            регламентом Республики Беларусь TP 2025/013/BY «О безопасности
+            строительных материалов и изделий».<br />
             При сертификации проводится подтверждение соответствия выполнения
             работ требованиям, установленным в ТНПА, взаимосвязанных с ТР
-            2009/013/BY.&nbsp;
+            2025/013/BY.&nbsp;
           </p>
           <p align="center"><b>Схемы сертификации выполнения работ</b><br /></p>
           <p align="center"></p>
@@ -1425,7 +1431,7 @@
             </li>
             <li>
               <a href="files/tr13i.pdf" target="_blank"
-                >TP 2025/013/BY «Здания и сооружения, строительные материалы и
+                >TP 2009/013/BY «Здания и сооружения, строительные материалы и
                 изделия. Безопасность»;</a
               >
             </li>
@@ -1926,7 +1932,7 @@
         });
       })();
     </script>
-  
+
     <!-- ====== СКРИПТ ПЕРЕКЛЮЧАТЕЛЯ ЯЗЫКА ====== -->
     <script>
       function googleTranslateElementInit() {
@@ -1958,7 +1964,8 @@
             "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           document.cookie =
             "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
-            location.hostname + ";";
+            location.hostname +
+            ";";
           localStorage.setItem("sertis_lang", "ru");
           location.reload();
           return;
@@ -1987,6 +1994,5 @@
         }
       });
     </script>
-
-</body>
+  </body>
 </html>
