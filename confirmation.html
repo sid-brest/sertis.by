@@ -110,12 +110,10 @@
         border-radius: 8px;
         object-fit: contain;
       }
-
       .logos-container {
         display: flex;
         align-items: center;
       }
-
       @media (max-width: 768px) {
         .logo-2026 {
           max-height: 45px;
@@ -165,8 +163,6 @@
         background: rgba(213, 35, 45, 0.3);
         flex-shrink: 0;
       }
-
-      /* Прячем всё лишнее от Google Translate */
       .goog-te-banner-frame,
       .goog-te-menu-frame {
         display: none !important;
@@ -184,6 +180,231 @@
         left: -9999px;
         top: -9999px;
         visibility: hidden;
+      }
+
+      /* ============================================================
+         КОНТЕНТНЫЕ БЛОКИ — только внутри #main
+         Фон не меняем, держимся стилей сайта
+         ============================================================ */
+
+      /* ── Заголовок секции ── */
+      #main .section-title p {
+        font-weight: 700 !important;
+        color: #2c3e50 !important;
+        padding-bottom: 12px !important;
+        border-bottom: 3px solid #d9232d !important;
+        margin-bottom: 20px !important;
+      }
+
+      /* ── Изображения ── */
+      #main .section-title img {
+        border-radius: 8px !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1) !important;
+        margin-bottom: 24px !important;
+      }
+
+      /* ── Карточка контента ── */
+      #main .faq-item {
+        border-radius: 8px !important;
+        border: 1px solid #e4e9f0 !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+        padding: 28px 32px !important;
+        margin-top: 0 !important;
+      }
+
+      /* ── Параграфы ── */
+      #main .faq-item p,
+      #confirmation-4 > .container > p,
+      #confirmation-5 > .container > p,
+      #confirmation-6 > .container > p {
+        line-height: 1.8 !important;
+      }
+
+      /* ── h3 ── */
+      #main .faq-item h3 {
+        font-weight: 700 !important;
+        color: #2c3e50 !important;
+        margin: 22px 0 10px !important;
+        padding-left: 12px !important;
+        border-left: 4px solid #d9232d !important;
+      }
+
+      /* ── Ненумерованные списки — без фона, только отступ и маркер ── */
+      #main .faq-item ul,
+      #confirmation-4 > .container > ul,
+      #confirmation-5 > .container > ul,
+      #confirmation-6 > .container > ul {
+        padding-left: 0 !important;
+        list-style: none !important;
+        margin: 0 0 16px 0 !important;
+      }
+      #main .faq-item ul li,
+      #confirmation-4 > .container > ul li,
+      #confirmation-5 > .container > ul li,
+      #confirmation-6 > .container > ul li {
+        position: relative !important;
+        padding: 5px 6px 5px 22px !important;
+        margin-bottom: 4px !important;
+        list-style: none !important;
+        background: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+      #main .faq-item ul li::before,
+      #confirmation-4 > .container > ul li::before,
+      #confirmation-5 > .container > ul li::before,
+      #confirmation-6 > .container > ul li::before {
+        content: "" !important;
+        position: absolute !important;
+        left: 4px !important;
+        top: 13px !important;
+        width: 7px !important;
+        height: 7px !important;
+        border-radius: 50% !important;
+        background: #d9232d !important;
+        flex-shrink: 0 !important;
+      }
+
+      /* ── Вложенные ul ── */
+      #main .faq-item li ul {
+        margin-top: 6px !important;
+      }
+      #main .faq-item li ul li {
+        padding-left: 20px !important;
+      }
+      #main .faq-item li ul li::before {
+        width: 5px !important;
+        height: 5px !important;
+        background: transparent !important;
+        border: 2px solid #d9232d !important;
+        top: 12px !important;
+      }
+
+      /* ── Нумерованные списки ── */
+      #main .faq-item ol {
+        padding-left: 0 !important;
+        list-style: none !important;
+        counter-reset: ol-cnt !important;
+        margin: 0 0 16px 0 !important;
+      }
+      #main .faq-item ol > li {
+        counter-increment: ol-cnt !important;
+        position: relative !important;
+        padding: 6px 6px 6px 30px !important;
+        margin-bottom: 6px !important;
+        list-style: none !important;
+        background: none !important;
+        border: none !important;
+      }
+      #main .faq-item ol > li::before {
+        content: counter(ol-cnt) !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 7px !important;
+        width: 20px !important;
+        height: 20px !important;
+        background: #d9232d !important;
+        color: #fff !important;
+        border-radius: 50% !important;
+        font-weight: 700 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1 !important;
+      }
+
+      /* ── Ссылки ── */
+      #main .faq-item a,
+      #confirmation-4 a,
+      #confirmation-5 a,
+      #confirmation-6 a {
+        color: #d9232d !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        border-bottom: 1px solid rgba(217, 35, 45, 0.35) !important;
+        transition:
+          color 0.15s,
+          border-color 0.15s !important;
+      }
+      #main .faq-item a:hover,
+      #confirmation-4 a:hover,
+      #confirmation-5 a:hover,
+      #confirmation-6 a:hover {
+        color: #a8151e !important;
+        border-bottom-color: #a8151e !important;
+      }
+
+      /* ── Таблицы ── */
+      #main table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07) !important;
+        margin: 20px 0 !important;
+      }
+      #main table tr:first-child td {
+        background: #2c3e50 !important;
+        color: #fff !important;
+        font-weight: 700 !important;
+        padding: 12px 16px !important;
+        border: none !important;
+        text-align: left !important;
+      }
+      #main table tr:not(:first-child) td {
+        padding: 12px 16px !important;
+        border-bottom: 1px solid #e4e9f0 !important;
+        vertical-align: top !important;
+        color: #444 !important;
+        background: #fff !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+      }
+      #main table tr:not(:first-child):nth-child(even) td {
+        background: #fafbfd !important;
+      }
+      #main table tr:not(:first-child) td:first-child {
+        font-weight: 800 !important;
+        color: #d9232d !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        min-width: 60px !important;
+        border-right: 1px solid #e4e9f0 !important;
+      }
+
+      /* ── Подписи таблиц ── */
+      #main p[align="center"] b {
+        display: inline-block !important;
+        font-weight: 700 !important;
+        color: #2c3e50 !important;
+      }
+
+      /* ── Контейнеры секций без faq-item ── */
+      #confirmation-4 > .container,
+      #confirmation-5 > .container,
+      #confirmation-6 > .container {
+        border-radius: 8px !important;
+        border: 1px solid #e4e9f0 !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+        padding: 28px 32px !important;
+        max-width: 1140px !important;
+        background: #fff !important;
+      }
+
+      /* ── Адаптив ── */
+      @media (max-width: 768px) {
+        #main .faq-item {
+          padding: 16px !important;
+        }
+        #confirmation-4 > .container,
+        #confirmation-5 > .container,
+        #confirmation-6 > .container {
+          padding: 16px !important;
+        }
+        #main .section-title p {
+          font-size: 1.15rem !important;
+        }
       }
     </style>
   </head>
