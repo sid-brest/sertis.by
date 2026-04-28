@@ -7,13 +7,13 @@ folder_path = "./"
 # НАСТРОЙКА: старый и новый код для замены
 # ============================================================
 
-old_code = """2009/013/BY"""
+old_code = """<h4>Полезные ссылки</h4>"""
 
-new_code = """2025/013/BY"""
+new_code = """<h4 style="visibility: hidden">&nbsp;</h4>"""
 
 # Уникальная строка для проверки, была ли замена уже сделана
 already_replaced_marker = (
-    """2025/013/BY"""
+    """<h4 style="visibility: hidden">&nbsp;</h4>"""
 )
 
 # ============================================================
@@ -26,7 +26,7 @@ files_no_match = 0
 errors = 0
 
 for filename in os.listdir(folder_path):
-    if not filename.endswith(".html"):
+    if not filename.endswith(".shtml"):
         continue
 
     file_path = os.path.join(folder_path, filename)
