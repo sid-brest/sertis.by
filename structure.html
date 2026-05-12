@@ -162,7 +162,7 @@
         stroke-width: 1.2;
         stroke-dasharray: 6 3;
       }
-    
+
       /* ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== */
       .lang-switcher {
         display: inline-flex;
@@ -185,7 +185,9 @@
         padding: 0 10px;
         height: 100%;
         color: #556270;
-        transition: background 0.18s, color 0.18s;
+        transition:
+          background 0.18s,
+          color 0.18s;
         line-height: 1;
         text-transform: uppercase;
       }
@@ -223,7 +225,7 @@
         top: -9999px;
         visibility: hidden;
       }
-</style>
+    </style>
   </head>
 
   <body>
@@ -254,7 +256,11 @@
                 <li><a href="profsoyuz.html">Профсоюзная организация</a></li>
                 <li><a href="idiology.html">Идеологическая работа</a></li>
                 <li><a href="corruption.html">Противодействие коррупции</a></li>
-                <li><a href="procedure.html">Обращение граждан и юридических лиц</a></li>
+                <li>
+                  <a href="procedure.html"
+                    >Обращение граждан и юридических лиц</a
+                  >
+                </li>
                 <li><a href="feedback.html">Отзывы</a></li>
                 <li><a href="requisites.html">Реквизиты</a></li>
               </ul>
@@ -412,7 +418,6 @@
 
         <!-- Скрытый контейнер для Google Translate -->
         <div id="google_translate_element"></div>
-
       </div>
     </header>
 
@@ -451,6 +456,24 @@
                 >
                   <path
                     d="M2 1L8 5L2 9"
+                    fill="none"
+                    stroke="#666"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </marker>
+                <marker
+                  id="arr-start"
+                  viewBox="0 0 10 10"
+                  refX="2"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M8 1L2 5L8 9"
                     fill="none"
                     stroke="#666"
                     stroke-width="1.5"
@@ -533,17 +556,26 @@
                 marker-end="url(#arr)"
               />
 
-              <!-- Главный специалист → СЦ (до пунктирной рамки) -->
+              <!-- Директор → Руководитель ИЦ -->
               <path
                 class="ln"
-                d="M236 156 L236 248 L170 248 L170 272"
+                d="M415 48 L672 48 L672 320 L628 320"
                 marker-end="url(#arr)"
               />
 
-              <!-- Главный специалист → ИЦ (до пунктирной рамки) -->
+              <!-- Главный специалист ↔ СЦ (двухсторонняя) -->
+              <path
+                class="ln"
+                d="M236 156 L236 248 L170 248 L170 272"
+                marker-start="url(#arr)"
+                marker-end="url(#arr)"
+              />
+
+              <!-- Главный специалист ↔ ИЦ (двухсторонняя) -->
               <path
                 class="ln"
                 d="M236 156 L236 262 L510 262 L510 272"
+                marker-start="url(#arr)"
                 marker-end="url(#arr)"
               />
 
@@ -810,7 +842,7 @@
         });
       })();
     </script>
-  
+
     <!-- ====== СКРИПТ ПЕРЕКЛЮЧАТЕЛЯ ЯЗЫКА ====== -->
     <script>
       function googleTranslateElementInit() {
@@ -842,7 +874,8 @@
             "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           document.cookie =
             "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
-            location.hostname + ";";
+            location.hostname +
+            ";";
           localStorage.setItem("sertis_lang", "ru");
           location.reload();
           return;
@@ -871,6 +904,5 @@
         }
       });
     </script>
-
-</body>
+  </body>
 </html>
