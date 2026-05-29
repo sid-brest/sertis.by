@@ -107,60 +107,47 @@
       #structure .section-title p {
         font-size: 14px !important;
       }
+
+      /* ---- Org chart ---- */
       .org-chart-wrap {
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding: 10px 0 30px;
-        -webkit-overflow-scrolling: touch;
+        padding: 30px 15px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
       }
-      .org-chart-wrap svg {
-        display: block;
+      .org-frame {
         width: 100%;
-        max-width: 100%;
-        min-width: 0;
+        max-width: 540px;
+        border: 1.5px dashed #888;
+        border-radius: 8px;
+        padding: 10px 14px 14px;
       }
-      @media (max-width: 600px) {
-        .org-chart-wrap svg {
-          width: 600px;
-          max-width: none;
-        }
-      }
-      .nb {
-        fill: #ffffff;
-        stroke: #555555;
-        stroke-width: 0.8;
-      }
-      .nt {
+      .org-frame__label {
         font-family: "Open Sans", sans-serif;
         font-size: 11px;
-        fill: #333333;
-        text-anchor: middle;
-        dominant-baseline: central;
-      }
-      .nt-b {
-        font-family: "Open Sans", sans-serif;
-        font-size: 12px;
-        font-weight: 600;
-        fill: #333333;
-        text-anchor: middle;
-        dominant-baseline: central;
-      }
-      .ni {
-        font-family: "Open Sans", sans-serif;
-        font-size: 10px;
-        fill: #666666;
         font-style: italic;
+        color: #888;
+        margin-bottom: 8px;
       }
-      .ln {
-        fill: none;
-        stroke: #666666;
-        stroke-width: 0.8;
+      .org-frame__box {
+        background: #fff;
+        border: 1px solid #aaa;
+        border-radius: 5px;
+        padding: 10px 16px;
+        text-align: center;
+        font-family: "Open Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+        line-height: 1.45;
       }
-      .db {
-        fill: none;
-        stroke: #666666;
-        stroke-width: 1.2;
-        stroke-dasharray: 6 3;
+      .org-frame__box span {
+        display: block;
+        font-size: 11px;
+        font-weight: 400;
+        color: #555;
+        margin-top: 3px;
       }
 
       /* ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== */
@@ -206,7 +193,6 @@
         flex-shrink: 0;
       }
 
-      /* Прячем всё лишнее от Google Translate */
       .goog-te-banner-frame,
       .goog-te-menu-frame {
         display: none !important;
@@ -438,198 +424,20 @@
       <section id="structure" class="team section-bg">
         <div class="container">
           <div class="org-chart-wrap">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="100%"
-              viewBox="0 0 680 480"
-              style="display: block"
-            >
-              <defs>
-                <marker
-                  id="arr"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M2 1L8 5L2 9"
-                    fill="none"
-                    stroke="#666"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-                <marker
-                  id="arr-start"
-                  viewBox="0 0 10 10"
-                  refX="2"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M8 1L2 5L8 9"
-                    fill="none"
-                    stroke="#666"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </marker>
-              </defs>
+            <!-- Рамка 1: Администрация -->
+            <div class="org-frame">
+              <div class="org-frame__box">Администрация</div>
+            </div>
 
-              <!-- ADMIN DASHED BOX -->
-              <rect class="db" x="18" y="8" width="644" height="218" rx="5" />
-              <text class="ni" x="30" y="22">
-                Администрация РУП «Сертис» РУП «Белстройцентр»
-              </text>
+            <!-- Рамка 2: Сертификационный центр -->
+            <div class="org-frame">
+              <div class="org-frame__box">Сертификационный центр</div>
+            </div>
 
-              <!-- Director -->
-              <rect class="nb" x="265" y="30" width="150" height="36" rx="4" />
-              <text class="nt-b" x="340" y="48">Директор</text>
-
-              <!-- Director → H-bar -->
-              <line class="ln" x1="340" y1="66" x2="340" y2="86" />
-              <line class="ln" x1="68" y1="86" x2="612" y2="86" />
-              <line
-                class="ln"
-                x1="68"
-                y1="86"
-                x2="68"
-                y2="100"
-                marker-end="url(#arr)"
-              />
-              <line
-                class="ln"
-                x1="236"
-                y1="86"
-                x2="236"
-                y2="100"
-                marker-end="url(#arr)"
-              />
-              <line
-                class="ln"
-                x1="444"
-                y1="86"
-                x2="444"
-                y2="100"
-                marker-end="url(#arr)"
-              />
-              <line
-                class="ln"
-                x1="612"
-                y1="86"
-                x2="612"
-                y2="100"
-                marker-end="url(#arr)"
-              />
-
-              <!-- Главный бухгалтер -->
-              <rect class="nb" x="28" y="100" width="80" height="44" rx="4" />
-              <text class="nt" x="68" y="116">Главный</text>
-              <text class="nt" x="68" y="130">бухгалтер</text>
-
-              <!-- Главный специалист -->
-              <rect class="nb" x="152" y="100" width="168" height="56" rx="4" />
-              <text class="nt" x="236" y="116">Главный специалист</text>
-              <text class="nt" x="236" y="130">по подтверждению</text>
-              <text class="nt" x="236" y="144">соответствия</text>
-
-              <!-- Главный инженер -->
-              <rect class="nb" x="376" y="100" width="136" height="36" rx="4" />
-              <text class="nt" x="444" y="118">Главный инженер</text>
-
-              <!-- Ведущий специалист -->
-              <rect class="nb" x="568" y="100" width="88" height="44" rx="4" />
-              <text class="nt" x="612" y="116">Ведущий</text>
-              <text class="nt" x="612" y="130">специалист</text>
-
-              <!-- Director → Руководитель СЦ (до левой границы блока) -->
-              <path
-                class="ln"
-                d="M265 48 L12 48 L12 320 L52 320"
-                marker-end="url(#arr)"
-              />
-
-              <!-- Директор → Руководитель ИЦ -->
-              <path
-                class="ln"
-                d="M415 48 L672 48 L672 320 L628 320"
-                marker-end="url(#arr)"
-              />
-
-              <!-- Главный специалист ↔ СЦ (двухсторонняя) -->
-              <path
-                class="ln"
-                d="M236 156 L236 248 L170 248 L170 272"
-                marker-start="url(#arr)"
-                marker-end="url(#arr)"
-              />
-
-              <!-- Главный специалист ↔ ИЦ (двухсторонняя) -->
-              <path
-                class="ln"
-                d="M236 156 L236 262 L510 262 L510 272"
-                marker-start="url(#arr)"
-                marker-end="url(#arr)"
-              />
-
-              <!-- SC DASHED BOX -->
-              <rect class="db" x="30" y="272" width="278" height="180" rx="5" />
-              <text class="ni" x="42" y="285">Сертификационный центр (СЦ)</text>
-
-              <rect class="nb" x="52" y="295" width="234" height="50" rx="4" />
-              <text class="nt" x="169" y="312">
-                Руководитель сертификационного
-              </text>
-              <text class="nt" x="169" y="328">
-                центра-заместитель директора
-              </text>
-
-              <line
-                class="ln"
-                x1="169"
-                y1="345"
-                x2="169"
-                y2="362"
-                marker-end="url(#arr)"
-              />
-
-              <rect class="nb" x="94" y="362" width="150" height="34" rx="4" />
-              <text class="nt" x="169" y="379">Специалисты СЦ</text>
-
-              <!-- IC DASHED BOX -->
-              <rect
-                class="db"
-                x="372"
-                y="272"
-                width="278"
-                height="180"
-                rx="5"
-              />
-              <text class="ni" x="384" y="285">Испытательный центр (ИЦ)</text>
-
-              <rect class="nb" x="394" y="295" width="234" height="50" rx="4" />
-              <text class="nt" x="511" y="312">Руководитель</text>
-              <text class="nt" x="511" y="328">испытательного центра</text>
-
-              <line
-                class="ln"
-                x1="511"
-                y1="345"
-                x2="511"
-                y2="362"
-                marker-end="url(#arr)"
-              />
-
-              <rect class="nb" x="436" y="362" width="150" height="34" rx="4" />
-              <text class="nt" x="511" y="379">Специалисты ИЦ</text>
-            </svg>
+            <!-- Рамка 3: Испытательный центр -->
+            <div class="org-frame">
+              <div class="org-frame__box">Испытательный центр</div>
+            </div>
           </div>
         </div>
       </section>
