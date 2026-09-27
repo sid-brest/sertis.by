@@ -161,6 +161,10 @@ def extract_articles(path):
     for m in ARTICLE_RE.finditer(html):
         aid = m.group(1)
         block = m.group(0)
+        clean = re.sub(r"(<img)\\(\s)", r"\1\2", block)
+        if clean != block:
+            print(f"  ИСПРАВЛЕН битый тег <img\\ в blog-{aid} ({path})")
+            block = clean
         title_m = TITLE_RE.search(block)
         time_m = TIME_RE.search(block)
         img_m = IMG_RE.search(block)
@@ -243,6 +247,12 @@ def rebuild():
     if not all_articles:
         print("Не найдено статей")
         return
+
+    for art in all_articles:
+        if not art["img"]:
+            print(f"  ПРЕДУПРЕЖДЕНИЕ: не найден тег img в blog-{art['id']}")
+        elif not os.path.exists(art["img"]):
+            print(f"  ПРЕДУПРЕЖДЕНИЕ: нет файла {art['img']} (blog-{art['id']})")
 
     all_articles.sort(key=lambda a: a["date"], reverse=True)
 
