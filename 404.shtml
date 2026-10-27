@@ -5,8 +5,10 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
     <title>Сертис - Ошибка 404</title>
+    <meta name="robots" content="noindex,follow" />
+    <link rel="canonical" href="https://sertis.by/404.shtml" />
     <meta
-      content="Республиканское дочернее унитарное научно-испытательное предприятие «Сертис» Инженерного республиканского унитарного предприятия «Белстройцентр» (РУП «Сертис» РУП «Белстройцентр»)  работает в области управления качеством в строительстве путем объединения в общий процесс элементов лицензирования,  сертификации,  лабораторных и контрольных испытаний совместно с органами Госстройнадзора и Госстандарта с 1993 года."
+      content="Запрошенная страница не найдена — ошибка 404 на сайте sertis.by."
       name="description"
     />
     <meta
@@ -190,7 +192,6 @@
     <!-- ======= Header ======= -->
     <header id="header" class="fixed-top d-flex align-items-center">
       <div class="container d-flex align-items-center">
-        <!-- <h1 class="logo me-auto"><a href="index.html">Сертис</a></h1> -->
         <!-- Uncomment below if you prefer to use an image logo -->
         <div class="logos-container me-auto">
           <a href="index.html" class="logo"
@@ -275,10 +276,11 @@
                 <li><a href="tests.html">Испытания</a></li>
                 <li>
                   <a href="assessment.html"
-                    >Оценка системы<br />производственного<br />котроля</a
+                    >Освидетельствование системы<br />производственного<br />контроля</a
                   >
                 </li>
                 <li><a href="suitability.html">Оценка пригодности</a></li>
+                <li><a href="admin.html">Административные процедуры</a></li>
                 <li>
                   <a href="extra.html">Дополнительные<br />услуги</a>
                 </li>

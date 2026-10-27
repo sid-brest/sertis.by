@@ -1,4 +1,3 @@
-robots.txt
 User-agent: *
 Disallow: /.github/
 Sitemap: https://sertis.by/sitemap.xml
