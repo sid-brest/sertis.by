@@ -25,7 +25,7 @@ print('restored from HEAD:', ', '.join(BLOGS))
 menu_re = re.compile(r'\s*<li>\s*<a href="confirmation\.html#confirmation-4".*?</li>', re.S)
 rename_re = re.compile(
     r'>Оценка системы<br />производственного<br />котроля</a')
-RENAMED = '>Освидетельствование системы<br />производственного<br />контроля</a>'
+RENAMED = '>Освидетельствование системы<br />производственного<br />контроля</a'
 admin_pat = re.compile(r'([ \t]*)<li><a href="suitability\.html">Оценка пригодности</a></li>')
 admin_new = '<li><a href="admin.html">Административные процедуры</a></li>'
 
