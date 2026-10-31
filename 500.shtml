@@ -278,12 +278,12 @@
                     >Освидетельствование системы<br />производственного<br />контроля</a
                   >
                 </li>
-                <li><a href="suitability.html">Оценка пригодности</a></li>
+                <li><a href="suitability.html">Техническая оценка пригодности</a></li>
                 <li><a href="admin.html">Административные процедуры</a></li>
                 <li>
                   <a href="extra.html">Дополнительные<br />услуги</a>
                 </li>
-                <li><a href="forms.html">Бланки</a></li>
+                <li><a href="forms.html">Формы документов</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -504,7 +504,7 @@
                 </li>
                 <li>
                   <i class="bx bx-chevron-right"></i>
-                  <a href="forms.html">Бланки</a>
+                  <a href="forms.html">Формы документов</a>
                 </li>
                 <li>
                   <i class="bx bx-chevron-right"></i>
@@ -516,7 +516,7 @@
                 </li>
                 <li>
                   <i class="bx bx-chevron-right"></i>
-                  <a href="suitability.html">Оценка пригодности</a>
+                  <a href="suitability.html">Техническая оценка пригодности</a>
                 </li>
               </ul>
             </div>
