@@ -231,3 +231,27 @@
     display: none;
   }
 }
+
+/* --- Диплинк из выдачи: подсветка места совпадения на странице --- */
+mark.search-hit {
+  background: #ffd9a0;
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 2px;
+}
+
+mark.search-hit.is-pulse {
+  animation: searchHitPulse 1s ease-in-out 3;
+}
+
+@keyframes searchHitPulse {
+  0%,
+  100% {
+    background: #ffd9a0;
+    box-shadow: none;
+  }
+  50% {
+    background: #ff9a3d;
+    box-shadow: 0 0 0 3px rgba(255, 154, 61, 0.45);
+  }
+}
