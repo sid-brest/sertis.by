@@ -8,7 +8,7 @@ body {
 
 a {
   text-decoration: none;
-  color: #d9232d;
+  color: #660c00;
 }
 
 a:hover {
@@ -141,7 +141,7 @@ h6 {
 .navbar .active,
 .navbar .active:focus,
 .navbar li:hover > a {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .navbar .getstarted,
@@ -193,7 +193,7 @@ h6 {
 .navbar .dropdown ul a:hover,
 .navbar .dropdown ul .active:hover,
 .navbar .dropdown ul li:hover > a {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .navbar .dropdown:hover > ul {
@@ -292,7 +292,7 @@ h6 {
 .navbar-mobile a:hover,
 .navbar-mobile .active,
 .navbar-mobile li:hover > a {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .navbar-mobile .getstarted,
@@ -327,7 +327,7 @@ h6 {
 .navbar-mobile .dropdown ul a:hover,
 .navbar-mobile .dropdown ul .active:hover,
 .navbar-mobile .dropdown ul li:hover > a {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .navbar-mobile .dropdown > .dropdown-active {
@@ -717,7 +717,7 @@ section {
 }
 
 .services .icon-box:hover h4 a {
-  color: #d9232d;
+  color: #660c00;
 }
 
 /*--------------------------------------------------------------
@@ -1065,12 +1065,12 @@ section {
 }
 
 .features .nav-link:hover {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .features .nav-link.active {
-  color: #d9232d;
-  border-color: #d9232d;
+  color: #660c00;
+  border-color: #660c00;
 }
 
 .features .tab-pane.active {
@@ -1491,7 +1491,7 @@ section {
 }
 
 .blog .entry .entry-title a:hover {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .blog .entry .entry-meta {
@@ -1600,7 +1600,7 @@ section {
 }
 
 .blog .entry .entry-footer a:hover {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .blog .entry .entry-footer .cats {
@@ -1709,7 +1709,7 @@ section {
 }
 
 .blog .blog-comments .comment h5 a:hover {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .blog .blog-comments .comment h5 .reply {
@@ -1891,7 +1891,7 @@ section {
 }
 
 .blog .sidebar .categories ul a:hover {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .blog .sidebar .categories ul a span {
@@ -1921,7 +1921,7 @@ section {
 }
 
 .blog .sidebar .recent-posts h4 a:hover {
-  color: #d9232d;
+  color: #660c00;
 }
 
 .blog .sidebar .recent-posts time {
