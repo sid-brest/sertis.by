@@ -1,0 +1,233 @@
+/* ==========================================================================
+   Поиск по сайту: кнопка-лупа в шапке + модальное окно выдачи
+   Фирменная палитра: #660c00 (основной), #99260d (ховеры кнопок),
+   #e2d1cf (подсветка совпадений), #f6f0f0 (фоны)
+   ========================================================================== */
+
+/* --- Кнопка-лупа в шапке (рядом с переключателем языка) --- */
+.header-search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 9px;
+  margin-left: 14px;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1.5px solid rgba(102, 12, 0, 0.35);
+  border-radius: 4px;
+  color: #556270;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+
+.header-search-btn:hover,
+.header-search-btn:focus-visible {
+  background: rgba(102, 12, 0, 0.08);
+  border-color: rgba(102, 12, 0, 0.6);
+  color: #660c00;
+  outline: none;
+}
+
+/* --- Модальное окно --- */
+.search-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+.search-modal.is-open {
+  display: block;
+}
+
+.search-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(30, 32, 38, 0.55);
+}
+
+.search-modal__dialog {
+  position: relative;
+  width: min(660px, calc(100% - 32px));
+  margin: 12vh auto 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 76vh;
+}
+
+/* Строка ввода */
+.search-modal__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e6e1e0;
+}
+
+.search-modal__icon {
+  color: #660c00;
+  font-size: 18px;
+}
+
+.search-modal__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px; /* 16px — без зума на iOS */
+  color: #2c3138;
+}
+
+.search-modal__input::placeholder {
+  color: #8a939d;
+}
+
+/* Кнопка очистки запроса (корзина) — меньше крестика закрытия */
+.search-modal__clear {
+  border: none;
+  background: transparent;
+  color: #8a939d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px; /* маленькая, но заметная (крестик закрытия — 16px) */
+  line-height: 1;
+  padding: 5px; /* кликабельная зона остаётся удобной */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.search-modal__clear[hidden] {
+  display: none;
+}
+
+.search-modal__clear:hover,
+.search-modal__clear:focus-visible {
+  background: rgba(102, 12, 0, 0.08);
+  color: #660c00;
+  outline: none;
+}
+
+.search-modal__close {
+  border: none;
+  background: transparent;
+  color: #556270;
+  font-size: 16px;
+  line-height: 1;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.search-modal__close:hover,
+.search-modal__close:focus-visible {
+  background: rgba(102, 12, 0, 0.08);
+  color: #660c00;
+  outline: none;
+}
+
+/* Статус: «Найдено N», «Введите запрос», «Ничего не найдено» */
+.search-modal__status {
+  padding: 10px 16px 0;
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+  color: #556270;
+  min-height: 18px;
+}
+
+/* Список результатов */
+.search-modal__results {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0 8px 8px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.search-result__link {
+  display: block;
+  padding: 10px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.search-result__link:hover,
+.search-result__link:focus-visible,
+.search-result.is-active .search-result__link {
+  background: rgba(102, 12, 0, 0.07);
+  outline: none;
+}
+
+.search-result__title {
+  display: block;
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c3138;
+  line-height: 1.35;
+}
+
+.search-result__url {
+  display: block;
+  font-family: "Open Sans", sans-serif;
+  font-size: 12px;
+  color: #99260d;
+  margin-top: 2px;
+}
+
+.search-result__snippet {
+  display: block;
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #556270;
+  margin-top: 4px;
+}
+
+/* Подсветка совпадений */
+.search-modal mark {
+  background: #e2d1cf;
+  color: #660c00;
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* Пустое состояние / ошибка */
+.search-modal__empty {
+  padding: 18px 10px 22px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+  color: #556270;
+  text-align: center;
+}
+
+.search-modal__empty strong {
+  color: #660c00;
+}
+
+/* --- Адаптив --- */
+@media (max-width: 768px) {
+  .search-modal__dialog {
+    margin-top: 8px;
+    width: 100%;
+    border-radius: 0;
+    height: calc(100% - 8px); /* не вылезать за нижний край экрана */
+    max-height: none;
+  }
+
+  .search-modal__hint {
+    display: none;
+  }
+}
