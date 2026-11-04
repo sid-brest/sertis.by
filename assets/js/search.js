@@ -1,8 +1,13 @@
 /* ==========================================================================
    Поиск по сайту: лупа в шапке -> модальное окно с живой выдачей
-   - индекс search-index.json подгружается лениво при первом открытии;
+   - индекс search-index.json подгружается лениво (и заранее — при наведении
+     на лупу);
    - каждое слово запроса ищется по подстроке, слова комбинируются (И);
    - ранжирование: заголовок страницы > заголовки секций > текст;
+   - индекс двуязычный: тексты хранятся парами «русский сегмент / беларускі
+     сегмент» (собирается build-search-index.py), поэтому поиск идёт по обоим
+     языкам, а выдача показывается на языке режима — без запросов к
+     внешним сервисам перевода;
    - выдача: сниппет с подсветкой <mark>, топ-20, навигация стрелками.
    ========================================================================== */
 (function () {
@@ -10,10 +15,13 @@
 
   var INDEX_URL = "search-index.json";
   var MIN_CHARS = 2; // минимум символов для запроса
-  var DEBOUNCE_MS = 150; // пауза перед поиском после ввода
+  var DEBOUNCE_MS = 60; // пауза перед поиском после ввода
   var MAX_RESULTS = 20; // максимум результатов
-  var SNIPPET_BEFORE = 60; // знаков до совпадения в сниппете
-  var SNIPPET_AFTER = 130; // знаков после совпадения в сниппете
+  var SNIPPET_MIN = 140; // сниппет добирает соседние сегменты до этой длины
+  var SNIPPET_MAX = 260; // и обрезается на этой длине
+  var MAX_MARKS = 300; // максимум подсвеченных вхождений на странице
+  var FIND_TIMEOUT_MS = 15000; // сколько ждём перевод страницы Google Translate
+  var FIND_QUIET_MS = 200; // пауза после последней правки DOM перед повторной попыткой
 
   var indexPromise = null; // ленивая загрузка индекса
   var pages = null; // подготовленные страницы (нормализованные поля)
@@ -23,9 +31,72 @@
     statusEl = null,
     triggerBtn = null;
   var activeIdx = -1; // подсвеченный результат (стрелки)
-  var searchToken = 0; // защита от гонки при переводе запроса
   var currentHits = [];
   var debounceTimer = null;
+
+  /* ------------------------- тексты интерфейса ------------------------- */
+
+  // Интерфейс окна поиска переведён здесь, а не Google Translate: модалка
+  // помечена translate="no", чтобы виджет не портил уже готовые строки.
+  var UI = {
+    ru: {
+      minChars: "Введите запрос — минимум " + MIN_CHARS + " символа.",
+      moreChars: function (n) {
+        return "Ещё " + n + " символ(а)…";
+      },
+      loading: "Загрузка индекса…",
+      loadFail: "Не удалось загрузить индекс поиска. Попробуйте обновить страницу.",
+      notFound: "Ничего не найдено.",
+      emptyHtml: function (q) {
+        return (
+          "По запросу <strong>" +
+          escapeHtml(q) +
+          "</strong> ничего не найдено.<br />Попробуйте другое слово или часть слова (например, «сертиф»)."
+        );
+      },
+      found: function (n, more) {
+        return "Найдено: " + n + (more ? " и более" : "");
+      },
+      placeholder: "Поиск по сайту…",
+      label: "Поиск по сайту",
+      clear: "Очистить запрос",
+      close: "Закрыть поиск",
+    },
+    be: {
+      minChars: "Увядзіце запыт — мінімум " + MIN_CHARS + " сімвалы.",
+      moreChars: function (n) {
+        return "Яшчэ " + n + " сімвал(ы)…";
+      },
+      loading: "Загрузка індэкса…",
+      loadFail: "Не ўдалося загрузіць індэкс пошуку. Паспрабуйце абнавіць старонку.",
+      notFound: "Нічога не знойдзена.",
+      emptyHtml: function (q) {
+        return (
+          "Па запыце <strong>" +
+          escapeHtml(q) +
+          "</strong> нічога не знойдзена.<br />Паспрабуйце іншае слова або частку слова (напрыклад, «сертыф»)."
+        );
+      },
+      found: function (n, more) {
+        return "Знойдзена: " + n + (more ? " і больш" : "");
+      },
+      placeholder: "Пошук па сайце…",
+      label: "Пошук па сайце",
+      clear: "Ачысціць запыт",
+      close: "Закрыць пошук",
+    },
+  };
+
+  // Режим беларускай мовы включается cookie googtrans=/ru/be
+  // (кнопка переключателя языка) — сайт переводит Google Translate,
+  // а поиск использует собственные белорусские тексты индекса.
+  function isBeMode() {
+    return /(?:^|;\s*)googtrans=\/ru\/be(?:;|$)/.test(document.cookie);
+  }
+
+  function ui() {
+    return UI[isBeMode() ? "be" : "ru"];
+  }
 
   /* ------------------------- утилиты ------------------------- */
 
@@ -57,7 +128,35 @@
     };
   }
 
+  function queryWords(q) {
+    return norm(q).split(/\s+/).filter(Boolean);
+  }
+
   /* ------------------------- индекс ------------------------- */
+
+  // Языковой вариант страницы: заголовок, заголовки секций и текст
+  // (склеенные сегменты). norm() сохраняет длину строки, поэтому позиции
+  // в нормализованном тексте совпадают с исходным; starts[k] — смещение
+  // начала сегмента k в склеенном тексте.
+  function makeVariant(title, heads, segs) {
+    var starts = [];
+    var pos = 0;
+    for (var i = 0; i < segs.length; i++) {
+      starts.push(pos);
+      pos += segs[i].length + 1; // сегменты склеиваются через пробел
+    }
+    var text = segs.join(" ");
+    return {
+      title: title,
+      ltitle: norm(title),
+      lheads: heads.map(function (h) {
+        return { t: norm(h.t), id: h.id };
+      }),
+      segs: segs,
+      ltext: norm(text),
+      starts: starts,
+    };
+  }
 
   function loadIndex() {
     if (!indexPromise) {
@@ -67,26 +166,34 @@
           return resp.json();
         })
         .then(function (data) {
-          // Нормализованные копии считаем один раз и кэшируем.
-          // toLowerCase() и замена ё->е сохраняют длину строки,
-          // поэтому позиции совпадений совпадают с исходным текстом
-          // и могут использоваться для построения сниппета.
           pages = (data.pages || []).map(function (p) {
-            p.ltitle = norm(p.title);
-            p.lheads = (p.headings || []).map(function (h) {
-              return { t: norm(h.t), id: h.id || "" };
-            });
-            p.ltext = norm(p.text);
-            // BE-вариант (собирается скриптом build-search-index.py);
-            // если его нет — страница просто ищется по-русски
-            if (p.titleBe && p.textBe) {
-              p.ltitleBe = norm(p.titleBe);
-              p.lheadsBe = (p.headingsBe || p.headings).map(function (h) {
-                return { t: norm(h.t), id: h.id || "" };
-              });
-              p.ltextBe = norm(p.textBe);
-            }
-            return p;
+            var segs = p.segs || [];
+            var heads = p.headings || [];
+            // BE-вариант есть, если сборка положила перевод в пары
+            var hasBe = !!p.titleBe && segs.length > 0 && segs[0].length > 1;
+            return {
+              url: p.url,
+              ru: makeVariant(
+                p.title,
+                heads.map(function (h) {
+                  return { t: h.t, id: h.id || "" };
+                }),
+                segs.map(function (s) {
+                  return s[0];
+                })
+              ),
+              be: hasBe
+                ? makeVariant(
+                    p.titleBe,
+                    heads.map(function (h) {
+                      return { t: h.b || h.t, id: h.id || "" };
+                    }),
+                    segs.map(function (s) {
+                      return s[1];
+                    })
+                  )
+                : null,
+            };
           });
           return pages;
         })
@@ -100,32 +207,26 @@
 
   /* ------------------------- поиск ------------------------- */
 
-  // Оценка слова на странице: заголовок x5 (x6 с начала слова),
+  // Оценка слова в варианте страницы: заголовок x5 (x6 с начала слова),
   // заголовок секции x3 (x4 с начала), текст x1.
-  // be=true — беларуский вариант полей (ltitleBe/lheadsBe/ltextBe)
-  function wordScore(page, w, be) {
-    var title = be ? page.ltitleBe : page.ltitle;
-    var heads = be ? page.lheadsBe : page.lheads;
-    var text = be ? page.ltextBe : page.ltext;
-    if (!text) return null; // запрошенного варианта у страницы нет
-
+  function wordScore(v, w) {
     var best = -1;
     var inTitle = false;
     var headingHit = -1;
 
-    var pos = title.indexOf(w);
+    var pos = v.ltitle.indexOf(w);
     if (pos >= 0) {
       var startBonus =
-        pos === 0 || /[\s\-—–(«"']/.test(title.charAt(pos - 1));
+        pos === 0 || /[\s\-—–(«"']/.test(v.ltitle.charAt(pos - 1));
       best = startBonus ? 6 : 5;
       inTitle = true;
     }
 
-    for (var i = 0; i < heads.length; i++) {
-      var hp = heads[i].t.indexOf(w);
+    for (var i = 0; i < v.lheads.length; i++) {
+      var hp = v.lheads[i].t.indexOf(w);
       if (hp >= 0) {
         var hStart =
-          hp === 0 || /[\s\-—–(«"']/.test(heads[i].t.charAt(hp - 1));
+          hp === 0 || /[\s\-—–(«"']/.test(v.lheads[i].t.charAt(hp - 1));
         var hs = hStart ? 4 : 3;
         if (hs > best) {
           best = hs;
@@ -134,8 +235,7 @@
       }
     }
 
-    var bp = text.indexOf(w);
-    if (bp >= 0 && 1 > best) {
+    if (v.ltext.indexOf(w) >= 0 && 1 > best) {
       best = 1;
       headingHit = -1;
     }
@@ -144,15 +244,12 @@
     return { score: best, heading: inTitle ? -1 : headingHit };
   }
 
-  // Оценка всех слов запроса в одном варианте языка (И); null — нет совпадений
-  function scoreVariant(page, words, be) {
-    var text = be ? page.ltextBe : page.ltext;
-    if (!text) return null;
-
+  // Оценка всех слов запроса в одном варианте (И); null — нет совпадений
+  function scoreVariant(v, words) {
     var total = 0;
     var anchorHeading = -1;
     for (var j = 0; j < words.length; j++) {
-      var r = wordScore(page, words[j], be);
+      var r = wordScore(v, words[j]);
       if (!r) return null; // И: все слова обязательны
       total += r.score;
       if (anchorHeading < 0 && r.heading >= 0) anchorHeading = r.heading;
@@ -162,7 +259,7 @@
     var density = 0;
     var from = 0;
     while (density < 5) {
-      var p = text.indexOf(words[0], from);
+      var p = v.ltext.indexOf(words[0], from);
       if (p < 0) break;
       density++;
       from = p + words[0].length;
@@ -179,25 +276,26 @@
     var hits = [];
     for (var i = 0; i < pages.length; i++) {
       var page = pages[i];
-      var ru = scoreVariant(page, words, false);
-      var be = page.ltextBe ? scoreVariant(page, words, true) : null;
+      var ru = scoreVariant(page.ru, words);
+      var be = page.be ? scoreVariant(page.be, words) : null;
       if (!ru && !be) continue;
 
-      // Каким вариантом показать: обычно — более высокая оценка,
+      // В каком варианте совпало: обычно — где оценка выше,
       // при равенстве — язык текущего режима
-      var useBe;
+      var matchBe;
       if (ru && be) {
-        useBe = be.score !== ru.score ? be.score > ru.score : modeBe;
+        matchBe = be.score !== ru.score ? be.score > ru.score : modeBe;
       } else {
-        useBe = !!be;
+        matchBe = !!be;
       }
-      var picked = useBe ? be : ru;
+      var picked = matchBe ? be : ru;
+      var variant = matchBe ? page.be : page.ru;
 
       hits.push({
         page: page,
         score: picked.score,
-        heading: picked.heading,
-        be: useBe,
+        anchor: picked.heading >= 0 ? variant.lheads[picked.heading].id : "",
+        matchBe: matchBe,
       });
     }
 
@@ -210,77 +308,98 @@
 
   /* ------------------------- выдача ------------------------- */
 
-  // Сниппет: первое вхождение любого слова запроса в центре фрагмента.
-  // be — какой вариант текста страницы показывать
-  function buildSnippet(page, words, be) {
-    var text = be ? page.ltextBe : page.ltext;
-    var raw = be ? page.textBe : page.text;
+  // Индекс сегмента, в который попадает позиция pos (бинарный поиск)
+  function segmentAt(starts, pos) {
+    var lo = 0;
+    var hi = starts.length - 1;
+    while (lo < hi) {
+      var mid = (lo + hi + 1) >> 1;
+      if (starts[mid] <= pos) lo = mid;
+      else hi = mid - 1;
+    }
+    return lo;
+  }
+
+  // Сниппет: сегмент с первым вхождением любого слова (+ соседние, пока
+  // короткий). Совпадение ищется в варианте matchBe, а показывается вариант
+  // showBe — это выровненный по сегментам перевод, внешний сервис не нужен.
+  // Подсвечиваем слова только если язык показа совпал с языком поиска.
+  function buildSnippet(page, words, matchBe, showBe) {
+    var m = matchBe ? page.be : page.ru;
+    var shown = showBe ? page.be : page.ru;
     var firstPos = -1;
     for (var i = 0; i < words.length; i++) {
-      var p = text.indexOf(words[i]);
+      var p = m.ltext.indexOf(words[i]);
       if (p >= 0 && (firstPos < 0 || p < firstPos)) firstPos = p;
     }
     if (firstPos < 0) firstPos = 0;
 
-    var start = Math.max(0, firstPos - SNIPPET_BEFORE);
-    var end = Math.min(text.length, firstPos + SNIPPET_AFTER);
-    var frag = raw.slice(start, end);
+    var si = segmentAt(m.starts, firstPos);
+    var text = shown.segs[si] || "";
+    for (var k = si + 1; k < shown.segs.length && text.length < SNIPPET_MIN; k++) {
+      text += " " + shown.segs[k];
+    }
+    var cut = text.length > SNIPPET_MAX;
+    if (cut) text = text.slice(0, SNIPPET_MAX);
 
-    return (
-      (start > 0 ? "…" : "") +
-      highlight(frag, words) +
-      (end < text.length ? "…" : "")
-    );
+    var body = matchBe === showBe ? highlight(text, words) : escapeHtml(text);
+    return (si > 0 ? "…" : "") + body + (cut ? "…" : "");
   }
 
   // Оборачивает все вхождения слов в <mark> (экранируя остальной текст)
   function highlight(text, words) {
-    var ranges = [];
-    var lower = norm(text); // та же длина, что и у text
-    for (var i = 0; i < words.length; i++) {
-      var w = words[i];
-      if (!w) continue;
-      var from = 0;
-      for (;;) {
-        var p = lower.indexOf(w, from);
-        if (p < 0) break;
-        ranges.push([p, p + w.length]);
-        from = p + w.length;
-      }
-    }
+    var ranges = findRanges(norm(text), words); // та же длина, что и у text
     if (!ranges.length) return escapeHtml(text);
-
-    ranges.sort(function (a, b) {
-      return a[0] - b[0];
-    });
-    var merged = [ranges[0]];
-    for (var r = 1; r < ranges.length; r++) {
-      var last = merged[merged.length - 1];
-      if (ranges[r][0] <= last[1]) last[1] = Math.max(last[1], ranges[r][1]);
-      else merged.push(ranges[r]);
-    }
 
     var out = "";
     var cursor = 0;
-    for (var m = 0; m < merged.length; m++) {
-      out += escapeHtml(text.slice(cursor, merged[m][0]));
-      out += "<mark>" + escapeHtml(text.slice(merged[m][0], merged[m][1])) + "</mark>";
-      cursor = merged[m][1];
+    for (var m = 0; m < ranges.length; m++) {
+      out += escapeHtml(text.slice(cursor, ranges[m][0]));
+      out +=
+        "<mark>" + escapeHtml(text.slice(ranges[m][0], ranges[m][1])) + "</mark>";
+      cursor = ranges[m][1];
     }
     out += escapeHtml(text.slice(cursor));
     return out;
   }
 
-  // matchWords — слова, по которым искать в индексе (например, после
-  // перевода запроса с беларускай мовы); note — доп. пояснение в статусе
-  function render(query, matchWords, note) {
-    var words = matchWords || norm(query).split(/\s+/).filter(Boolean);
+  // Непересекающиеся диапазоны всех вхождений слов в строке (по порядку)
+  function findRanges(lower, words) {
+    var ranges = [];
+    for (var i = 0; i < words.length; i++) {
+      if (!words[i]) continue;
+      var from = 0;
+      for (;;) {
+        var p = lower.indexOf(words[i], from);
+        if (p < 0) break;
+        ranges.push([p, p + words[i].length]);
+        from = p + words[i].length;
+      }
+    }
+    ranges.sort(function (a, b) {
+      return a[0] - b[0];
+    });
+    var merged = [];
+    for (var r = 0; r < ranges.length; r++) {
+      var last = merged[merged.length - 1];
+      if (last && ranges[r][0] <= last[1]) {
+        last[1] = Math.max(last[1], ranges[r][1]);
+      } else {
+        merged.push(ranges[r]);
+      }
+    }
+    return merged;
+  }
+
+  function render(query) {
+    var words = queryWords(query);
+    var t = ui();
+    var showBe = isBeMode();
 
     if (!words.length) {
       currentHits = [];
       resultsEl.innerHTML = "";
-      statusEl.textContent = "Введите запрос — минимум " + MIN_CHARS + " символа.";
-      syncResultsLang();
+      setStatus(t.minChars);
       return;
     }
 
@@ -289,11 +408,8 @@
 
     if (!currentHits.length) {
       resultsEl.innerHTML =
-        '<li class="search-modal__empty">По запросу <strong>' +
-        escapeHtml(query) +
-        "</strong> ничего не найдено.<br />Попробуйте другое слово или часть слова (например, «сертиф»).</li>";
-      statusEl.textContent = "Ничего не найдено.";
-      syncResultsLang(); // -> перевод на язык режима (BE)
+        '<li class="search-modal__empty">' + t.emptyHtml(query) + "</li>";
+      setStatus(t.notFound);
       return;
     }
 
@@ -301,226 +417,40 @@
     for (var i = 0; i < currentHits.length; i++) {
       var hit = currentHits[i];
       var page = hit.page;
-      var anchor =
-        hit.heading >= 0 && page.headings[hit.heading].id
-          ? page.headings[hit.heading].id
-          : "";
-      var title = hit.be && page.titleBe ? page.titleBe : page.title;
+      // Показываем язык режима, если у страницы есть такой вариант
+      var showPageBe = showBe && !!page.be;
+      var shown = showPageBe ? page.be : page.ru;
       // ?find — слова запроса, чтобы страница нашла и подсветила место
       // совпадения; &sec — запасной якорь (если find не сработал)
       var href =
         page.url +
         "?find=" +
         encodeURIComponent(words.join(" ")) +
-        (anchor ? "&sec=" + encodeURIComponent(anchor) : "");
+        (hit.anchor ? "&sec=" + encodeURIComponent(hit.anchor) : "");
+      var title =
+        hit.matchBe === showPageBe
+          ? highlight(shown.title, words)
+          : escapeHtml(shown.title);
       html.push(
-        '<li class="search-result" role="option" id="search-result-' + i + '"' +
-          ' data-lang="' +
-          (hit.be ? "be" : "ru") +
-          '">' +
+        '<li class="search-result" role="option" id="search-result-' + i + '">' +
           '<a class="search-result__link" href="' +
           escapeHtml(href) +
           '">' +
           '<span class="search-result__title">' +
-          highlight(title, words) +
+          title +
           "</span>" +
           '<span class="search-result__url">' +
-          escapeHtml(page.url + (anchor ? "#" + anchor : "")) +
+          escapeHtml(page.url + (hit.anchor ? "#" + hit.anchor : "")) +
           "</span>" +
           '<span class="search-result__snippet">' +
-          buildSnippet(page, words, hit.be) +
+          buildSnippet(page, words, hit.matchBe, showPageBe) +
           "</span>" +
           "</a></li>"
       );
     }
     resultsEl.innerHTML = html.join("");
-    statusEl.textContent =
-      "Найдено: " +
-      currentHits.length +
-      (currentHits.length === MAX_RESULTS ? " и более" : "") +
-      (note ? " — " + note : "");
+    setStatus(t.found(currentHits.length, currentHits.length === MAX_RESULTS));
     resultsEl.scrollTop = 0;
-    // Статус всегда по-русски, результаты — на языке своего варианта;
-    // syncResultsLang доводит всё до языка режима (в RU — no-op)
-    syncResultsLang();
-  }
-
-  /* --------- перевод выдачи, если её язык ≠ языку режима --------- */
-
-  var trCache = Object.create(null); // кэш: "ru>be": {исходный: перевод}
-
-  // Пакетный перевод строк через тот же Google Translate.
-  // Строки соединяются через "\n" и разъединяются обратно.
-  function translateBatch(texts, from, to) {
-    var url =
-      "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" +
-      from +
-      "&tl=" +
-      to +
-      "&dt=t&q=" +
-      encodeURIComponent(texts.join("\n"));
-    return fetch(url).then(function (resp) {
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-      return resp.json().then(function (data) {
-        var out = (data[0] || [])
-          .map(function (seg) {
-            return seg[0];
-          })
-          .join("");
-        var lines = out.split("\n");
-        // Если Google разбил строки иначе — отказываемся
-        return lines.length === texts.length ? lines : null;
-      });
-    });
-  }
-
-  // Переводит выдачу на язык режима там, где она на другом:
-  // - статус и пустая выдача всегда пишутся по-русски -> в BE-режиме переводим;
-  // - результаты с data-lang, отличным от режима, переводятся в язык режима.
-  // <mark>-подсветка сохраняется: текст между тегами переводится отдельно.
-  function syncResultsLang() {
-    var mode = isBeMode() ? "be" : "ru";
-    var pairs = []; // {node, src, from}
-    var seen = Object.create(null); // ключ "from|src" -> нет перевода
-    var todo = { ru: [], be: [] }; // строки без кэша по направлению
-
-    var collect = function (node, from) {
-      if (node.nodeType === 3) {
-        var src = node.nodeValue;
-        if (!src.trim()) return;
-        if (from === mode) return; // уже на языке режима
-        var key = from + "|" + src;
-        pairs.push({ node: node, src: src, from: from });
-        if (!(key in seen)) {
-          seen[key] = true;
-          if (!trCache[key]) todo[from].push(src);
-        }
-        return;
-      }
-      if (node.nodeType === 1) {
-        Array.prototype.slice.call(node.childNodes).forEach(function (c) {
-          collect(c, from);
-        });
-      }
-    };
-
-    // статус и пустая выдача — русский
-    if (statusEl) collect(statusEl, "ru");
-    var emptyEl = resultsEl && resultsEl.querySelector(".search-modal__empty");
-    if (emptyEl) collect(emptyEl, "ru");
-
-    // результаты — на языке своего data-lang
-    if (resultsEl) {
-      Array.prototype.slice.call(
-        resultsEl.querySelectorAll(".search-result")
-      ).forEach(function (li) {
-        var lang = li.getAttribute("data-lang") === "be" ? "be" : "ru";
-        Array.prototype.slice.call(li.querySelectorAll(".search-result__title, .search-result__snippet")).forEach(function (el) {
-          collect(el, lang);
-        });
-      });
-    }
-    if (!pairs.length) return;
-
-    var apply = function () {
-      pairs.forEach(function (p) {
-        var key = p.from + "|" + p.src;
-        // применяем только если узел жив и текст не менялся с момента сбора
-        if (p.node.isConnected && p.node.nodeValue === p.src && trCache[key]) {
-          p.node.nodeValue = trCache[key];
-        }
-      });
-    };
-
-    var dirs = [];
-    if (todo.ru.length) dirs.push(["ru", "be"]);
-    if (todo.be.length) dirs.push(["be", "ru"]);
-
-    if (!dirs.length) {
-      apply();
-      return;
-    }
-    var pending = dirs.length;
-    dirs.forEach(function (d) {
-      var from = d[0],
-        to = d[1];
-      translateBatch(todo[from], from, to).then(
-        function (lines) {
-          if (lines) {
-            todo[from].forEach(function (src, i) {
-              trCache[from + "|" + src] = lines[i];
-            });
-          }
-          if (--pending === 0) apply();
-        },
-        function () {
-          if (--pending === 0) apply(); // перевод недоступен — что есть, то и показываем
-        }
-      );
-    });
-  }
-
-  /* --------- режим BE: перевод запроса перед поиском --------- */
-
-  // Режим беларускай мовы включается cookie googtrans=/ru/be
-  // (кнопка переключателя языка) — страницу переводит Google Translate,
-  // а индекс поиска остаётся русским.
-  function isBeMode() {
-    return /(?:^|;\s*)googtrans=\/ru\/be(?:;|$)/.test(document.cookie);
-  }
-
-  // Перевод запроса с беларускай на русский (тот же Google Translate,
-  // что переводит сайт; запрос уходит только при пустой выдаче)
-  var queryCache = Object.create(null);
-  function translateQuery(q) {
-    var key = norm(q);
-    if (queryCache[key]) return Promise.resolve(queryCache[key]);
-    var url =
-      "https://translate.googleapis.com/translate_a/single?client=gtx&sl=be&tl=ru&dt=t&q=" +
-      encodeURIComponent(q);
-    return fetch(url).then(function (resp) {
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-      return resp.json().then(function (data) {
-        var out = (data[0] || [])
-          .map(function (seg) {
-            return seg[0];
-          })
-          .join("")
-          .trim();
-        if (out) queryCache[key] = out;
-        return out;
-      });
-    });
-  }
-
-  // Поиск: сначала как есть; в режиме BE при пустой выдаче —
-  // переводим запрос и ищем повторно (устаревшие ответы отбрасываем)
-  function runSearch(query) {
-    var token = ++searchToken;
-    var words = norm(query).split(/\s+/).filter(Boolean);
-    var hits = searchWords(words);
-    if (hits.length || !isBeMode()) {
-      render(query, words);
-      return;
-    }
-    setStatus("Переводим запрос…");
-    translateQuery(query).then(
-      function (tr) {
-        if (token !== searchToken) return;
-        var same = !tr || norm(tr) === norm(query);
-        var twords = same ? words : norm(tr).split(/\s+/).filter(Boolean);
-        var thits = searchWords(twords);
-        render(
-          query,
-          twords,
-          !same && thits.length ? "переведено: «" + tr + "»" : ""
-        );
-      },
-      function () {
-        if (token !== searchToken) return;
-        render(query, words);
-      }
-    );
   }
 
   /* ------------------------- модалка ------------------------- */
@@ -529,21 +459,20 @@
     if (modal) return modal;
 
     modal = document.createElement("div");
-    modal.className = "search-modal";
+    modal.className = "search-modal notranslate";
+    modal.setAttribute("translate", "no");
     modal.id = "searchModal";
     modal.setAttribute("aria-hidden", "true");
     modal.innerHTML =
       '<div class="search-modal__backdrop" data-search-close></div>' +
-      '<div class="search-modal__dialog" role="dialog" aria-modal="true" aria-label="Поиск по сайту">' +
+      '<div class="search-modal__dialog" role="dialog" aria-modal="true">' +
       '<div class="search-modal__bar">' +
       '<i class="bi bi-search search-modal__icon" aria-hidden="true"></i>' +
       '<input type="text" class="search-modal__input" id="searchInput" ' +
-      'placeholder="Поиск по сайту…" autocomplete="off" spellcheck="false" ' +
-      'aria-label="Поиск по сайту" aria-controls="searchResults" />' +
-      '<button type="button" class="search-modal__clear" id="searchClear" ' +
-      'aria-label="Очистить запрос" hidden>' +
+      'autocomplete="off" spellcheck="false" aria-controls="searchResults" />' +
+      '<button type="button" class="search-modal__clear" id="searchClear" hidden>' +
       '<i class="bi bi-trash3" aria-hidden="true"></i></button>' +
-      '<button type="button" class="search-modal__close" data-search-close aria-label="Закрыть поиск">' +
+      '<button type="button" class="search-modal__close" data-search-close>' +
       '<i class="bi bi-x-lg" aria-hidden="true"></i></button>' +
       "</div>" +
       '<div class="search-modal__status" id="searchStatus" role="status" aria-live="polite"></div>' +
@@ -563,18 +492,14 @@
       "input",
       debounce(function () {
         var q = input.value;
-        if (norm(q).length < MIN_CHARS) {
+        var len = norm(q).length;
+        if (len < MIN_CHARS) {
           currentHits = [];
           resultsEl.innerHTML = "";
-          setStatus(
-            norm(q).length
-              ? "Ещё " + (MIN_CHARS - norm(q).length) + " символ(а)…"
-              : "Введите запрос — минимум " + MIN_CHARS + " символа."
-          );
+          setStatus(len ? ui().moreChars(MIN_CHARS - len) : ui().minChars);
           return;
         }
-        setStatus("Ищем…");
-        runSearch(q);
+        render(q);
       }, DEBOUNCE_MS)
     );
 
@@ -590,43 +515,47 @@
       clearBtn.hidden = true;
       currentHits = [];
       resultsEl.innerHTML = "";
-      setStatus("Введите запрос — минимум " + MIN_CHARS + " символа.");
+      setStatus(ui().minChars);
       input.focus();
     });
 
     return modal;
   }
 
+  // Подписи кнопок и подсказка — на языке режима (обновляются при открытии)
+  function applyUiLang() {
+    var t = ui();
+    input.placeholder = t.placeholder;
+    input.setAttribute("aria-label", t.label);
+    modal.querySelector(".search-modal__dialog").setAttribute("aria-label", t.label);
+    modal.querySelector("#searchClear").setAttribute("aria-label", t.clear);
+    modal.querySelector(".search-modal__close").setAttribute("aria-label", t.close);
+  }
+
   function setStatus(text) {
     if (statusEl) statusEl.textContent = text;
-    // В BE-режиме статус («Ищем…», «Загрузка индекса…») тоже переводим
-    if (statusEl && isBeMode()) syncResultsLang();
+  }
+
+  function showCurrentQuery() {
+    if (norm(input.value).length >= MIN_CHARS) render(input.value);
+    else setStatus(ui().minChars);
   }
 
   function openModal() {
     buildModal();
+    applyUiLang();
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
     input.focus();
     input.select();
     if (!pages) {
-      setStatus("Загрузка индекса…");
-      loadIndex().then(
-        function () {
-          if (input.value.trim().length >= MIN_CHARS) runSearch(input.value);
-          else setStatus("Введите запрос — минимум " + MIN_CHARS + " символа.");
-        },
-        function () {
-          setStatus(
-            "Не удалось загрузить индекс поиска. Попробуйте обновить страницу."
-          );
-        }
-      );
-    } else if (input.value.trim().length >= MIN_CHARS) {
-      runSearch(input.value);
+      setStatus(ui().loading);
+      loadIndex().then(showCurrentQuery, function () {
+        setStatus(ui().loadFail);
+      });
     } else {
-      setStatus("Введите запрос — минимум " + MIN_CHARS + " символа.");
+      showCurrentQuery();
     }
   }
 
@@ -684,8 +613,8 @@
 
   /* ------------------------- диплинк ?find= ------------------------- */
 
-  // Выдача ведёт на страницу с ?find=слова[&sec=якорь]: находим первое
-  // совпадение в <main>, подсвечиваем и плавно прокручиваем к нему.
+  // Выдача ведёт на страницу с ?find=слова[&sec=якорь]: находим все
+  // совпадения в <main>, подсвечиваем и плавно прокручиваем к первому.
   // Если слово не нашлось сразу — прокручиваем к якорю &sec (запасной
   // вариант), а поиск слова продолжаем в фоне: Google Translate
   // переводит страницу с задержкой и слово может появиться позже.
@@ -703,7 +632,7 @@
     // Не даём браузеру самому прыгнуть до нашей обработки
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
-    var words = norm(find).split(/\s+/).filter(Boolean);
+    var words = queryWords(find);
     var found = false;
     var secScrolled = false;
 
@@ -718,7 +647,7 @@
 
     var tryWords = function (list) {
       if (found) return true;
-      var marked = markFirstMatch(list);
+      var marked = markAllMatches(list);
       if (marked) {
         found = true;
         scrollToMark(marked);
@@ -733,33 +662,38 @@
     if (!words.length) return;
 
     // Google Translate переводит страницу ПОСЛЕ загрузки — в BE-режиме
-    // искомое слово появляется в тексте с задержкой. Пробуем несколько раз;
-    // если нашли позже — перепрыгиваем с якоря на точное место.
-    var attempts = 0;
-    var MAX_ATTEMPTS = 30; // ~15 сек: GT переводит страницу не сразу
-    var tick = function () {
-      if (found) return;
-      attempts++;
-      if (tryWords(words)) return;
-      if (attempts >= MAX_ATTEMPTS) {
-        // так и не нашли — пробуем перевод слова (слово могло быть
-        // на другом языке, чем текст страницы)
-        translateQuery(find).then(
-          function (tr) {
-            var tw = tr ? norm(tr).split(/\s+/).filter(Boolean) : [];
-            if (tw.length) tryWords(tw);
-          },
-          function () {}
-        );
-        return;
-      }
-      setTimeout(tick, 500);
+    // искомое слово появляется в тексте с задержкой. Вместо опроса по
+    // таймеру следим за изменениями DOM: пробуем снова сразу после того,
+    // как Google Translate закончил очередную правку.
+    var main = document.querySelector("main");
+    if (!main || !("MutationObserver" in window)) return;
+
+    var quietTimer = null;
+    var giveUpTimer = null;
+    var observer = new MutationObserver(function () {
+      clearTimeout(quietTimer);
+      quietTimer = setTimeout(function () {
+        if (tryWords(words)) stop();
+      }, FIND_QUIET_MS);
+    });
+    var stop = function () {
+      observer.disconnect();
+      clearTimeout(quietTimer);
+      clearTimeout(giveUpTimer);
     };
-    setTimeout(tick, 500);
+
+    observer.observe(main, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+    giveUpTimer = setTimeout(stop, FIND_TIMEOUT_MS);
   }
 
-  // Оборачивает первое вхождение всех слов запроса (И) в <mark class="search-hit">
-  function markFirstMatch(words) {
+  // Оборачивает ВСЕ вхождения слов запроса в <mark class="search-hit">.
+  // Условие «И»: если хоть одного слова нет в <main> — не подсвечиваем
+  // (вернётся null). Возвращает первую по порядку метку (к ней скроллим).
+  function markAllMatches(words) {
     var main = document.querySelector("main");
     if (!main) return null;
 
@@ -772,6 +706,7 @@
         if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT") {
           return NodeFilter.FILTER_REJECT;
         }
+        if (p.closest("mark.search-hit")) return NodeFilter.FILTER_REJECT;
         if (!node.nodeValue || !node.nodeValue.trim()) {
           return NodeFilter.FILTER_REJECT;
         }
@@ -780,74 +715,62 @@
     });
     while (walk.nextNode()) nodes.push(walk.currentNode);
 
-    // Позиция каждого слова в склеенном тексте main
-    var offsets = []; // {start, end, word}
-    var pos = 0;
-    var pieces = nodes.map(function (n) {
-      return n.nodeValue;
-    });
-    var joined = pieces.join("");
-    var lowerJoined = norm(joined);
-
+    // Все слова должны встречаться на странице (в склеенном тексте)
+    var lowerJoined = norm(
+      nodes
+        .map(function (n) {
+          return n.nodeValue;
+        })
+        .join(" ")
+    );
     for (var i = 0; i < words.length; i++) {
-      var p = lowerJoined.indexOf(words[i]);
-      if (p < 0) return null; // хоть одного слова нет — не то место
-      offsets.push({ start: p, end: p + words[i].length, word: words[i] });
+      if (lowerJoined.indexOf(words[i]) < 0) return null;
     }
 
-    // Берём позицию первого слова; помечаем каждое слово в его узле
-    var nodeStarts = [];
-    var acc = 0;
-    for (var n = 0; n < nodes.length; n++) {
-      nodeStarts.push(acc);
-      acc += pieces[n].length;
-    }
-    var findNode = function (absPos) {
-      for (var k = nodes.length - 1; k >= 0; k--) {
-        if (nodeStarts[k] <= absPos) return k;
+    var first = null;
+    var count = 0;
+    for (var n = 0; n < nodes.length && count < MAX_MARKS; n++) {
+      var node = nodes[n];
+      var text = node.nodeValue;
+      var ranges = findRanges(norm(text), words); // norm не меняет длину
+      if (!ranges.length) continue;
+
+      var frag = document.createDocumentFragment();
+      var cursor = 0;
+      for (var r = 0; r < ranges.length && count < MAX_MARKS; r++) {
+        if (ranges[r][0] > cursor) {
+          frag.appendChild(
+            document.createTextNode(text.slice(cursor, ranges[r][0]))
+          );
+        }
+        var wrap = document.createElement("mark");
+        wrap.className = "search-hit";
+        wrap.textContent = text.slice(ranges[r][0], ranges[r][1]);
+        frag.appendChild(wrap);
+        if (!first) first = wrap;
+        cursor = ranges[r][1];
+        count++;
       }
-      return -1;
-    };
-
-    // Помечаем с конца, чтобы смещения в узлах не поехали;
-    // mark — самое левое совпадение (к нему и прокручиваем)
-    offsets.sort(function (a, b) {
-      return b.start - a.start;
-    });
-    var mark = null;
-    for (var o = 0; o < offsets.length; o++) {
-      var off = offsets[o];
-      var ki = findNode(off.start);
-      var kj = findNode(off.end - 1);
-      if (ki < 0 || ki !== kj) continue; // слово пересекает узлы — пропускаем
-      var node = nodes[ki];
-      var local = off.start - nodeStarts[ki];
-      // отрезаем хвост после слова (слово остаётся в node)
-      var tailNode = node.splitText(local + off.word.length);
-      var wordText = node.nodeValue.slice(local);
-      var headText = node.nodeValue.slice(0, local);
-
-      var wrap = document.createElement("mark");
-      wrap.className = "search-hit";
-      wrap.textContent = wordText;
-      node.nodeValue = headText;
-      node.parentNode.insertBefore(wrap, node.nextSibling);
-      if (!headText) node.parentNode.removeChild(node);
-      if (tailNode.nodeValue) {
-        wrap.parentNode.insertBefore(tailNode, wrap.nextSibling);
+      if (cursor < text.length) {
+        frag.appendChild(document.createTextNode(text.slice(cursor)));
       }
-      // сортировка по убыванию: последняя итерация — самое левое слово
-      mark = wrap;
+      node.parentNode.replaceChild(frag, node);
     }
-    return mark;
+    return first;
   }
 
   function scrollToMark(el) {
     el.scrollIntoView({ behavior: "smooth", block: "center" });
-    el.classList.add("is-pulse");
-    // убираем подсветку, чтобы не висела вечно
+    // пульсируют все найденные места, а не только первое
+    var marks = document.querySelectorAll("mark.search-hit");
+    Array.prototype.forEach.call(marks, function (m) {
+      m.classList.add("is-pulse");
+    });
+    // убираем пульсацию, чтобы не висела вечно (подсветка остаётся)
     setTimeout(function () {
-      el.classList.remove("is-pulse");
+      Array.prototype.forEach.call(marks, function (m) {
+        m.classList.remove("is-pulse");
+      });
     }, 3000);
   }
 
@@ -860,6 +783,18 @@
     initFind();
 
     if (!triggerBtn) return;
+
+    // Индекс качаем заранее, как только пользователь потянулся к поиску —
+    // к открытию окна он обычно уже в памяти
+    ["pointerenter", "focus", "touchstart"].forEach(function (evt) {
+      triggerBtn.addEventListener(
+        evt,
+        function () {
+          loadIndex().catch(function () {});
+        },
+        { once: true, passive: true }
+      );
+    });
 
     triggerBtn.addEventListener("click", function () {
       if (isOpen()) closeModal();

@@ -7,20 +7,26 @@
   - url (имя файла),
   - <title>,
   - заголовки h1-h4 с их id (для якорных ссылок),
-  - текст <main> (без скриптов, стилей, комментариев, разметки).
+  - текст <main>, разбитый на «сегменты» (предложения / короткие абзацы).
 
-Дополнительно текст каждой страницы переводится на беларускую мову
-(тот же Google Translate, что переводит сайт кнопкой BE) и сохраняется
-полями titleBe / headingsBe / textBe — чтобы поиск работал по-беларусски,
-включая части слов («адпавед» -> «адпаведнасці»).
+Статьи пишутся только по-русски. Для белорусского режима каждый сегмент,
+заголовок и <title> переводятся на беларускую мову (Google Translate gtx,
+тот же движок, что и у кнопки BE на сайте) и хранятся В ПАРЕ с оригиналом:
+    "segs": [["русский сегмент", "беларускі сегмент"], ...]
+Благодаря выровненным парам браузеру посетителя не нужно ничего переводить
+на лету: поиск идёт по обоим языкам, а выдача показывается на языке режима.
 
-Переводы кэшируются в search-index.be.cache.json: при повторном запуске
-переводятся только изменившиеся фрагменты. Сбой перевода не ломает сборку:
-страница просто остаётся без BE-полей (поиск по ней будет русским).
+Кэш переводов — search-index.be.cache.json ({русская строка: перевод}).
+При повторном запуске переводятся только новые и изменённые сегменты;
+строки, которых больше нет на сайте, из кэша удаляются.
 
-Запуск после любой правки контента:
-    python build-search-index.py            # RU + BE
-    python build-search-index.py --no-be    # только русский индекс
+Запуск (обычно — автоматически, см. .github/workflows/search-index.yml):
+    py -3 build-search-index.py            # RU + BE
+    py -3 build-search-index.py --no-be    # только русский индекс
+
+Код возврата: 0 — всё хорошо; 2 — часть сегментов не удалось перевести
+(индекс записан, непереведённые сегменты остались русскими и будут
+переведены при следующем запуске).
 """
 
 import json
@@ -43,7 +49,10 @@ GTX_URL = (
 )
 REQUEST_SLEEP = 0.15   # пауза между запросами к Google
 MAX_RETRIES = 3        # повторы при 429/5xx
-CHUNK_LIMIT = 900      # максимум символов в одном запросе перевода
+BATCH_LIMIT = 900      # максимум символов в одном запросе перевода
+BATCH_LINES = 25       # максимум строк в одном запросе перевода
+SEG_LIMIT = 300        # максимум символов в одном сегменте
+EXIT_PARTIAL = 2       # код возврата: часть переводов не удалась
 
 # Строки внутри этих тегов не индексируются
 INERT_RE = re.compile(
@@ -56,6 +65,13 @@ TITLE_RE = re.compile(r"<title\b[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 HEADING_RE = re.compile(
     r"<h([1-4])\b([^>]*)>(.*?)</h\1>", re.IGNORECASE | re.DOTALL
 )
+# Границы блоков: между ними сегменты не склеиваются
+BLOCK_RE = re.compile(
+    r"</?(?:p|div|li|ul|ol|tr|td|th|table|br|h[1-6]|section|article|"
+    r"header|footer|blockquote|dd|dt|figcaption)\b[^>]*>",
+    re.IGNORECASE,
+)
+BLOCK_MARK = "\x00"
 ID_RE = re.compile(r"""\bid\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 TAG_RE = re.compile(r"<[^>]+>")
 WS_RE = re.compile(r"\s+")
@@ -74,8 +90,15 @@ def html_unescape(text):
     return _html.unescape(text)
 
 
+def text_blocks(fragment):
+    """Разметка -> список непустых текстовых блоков (абзацы, пункты, ячейки)."""
+    marked = BLOCK_RE.sub(BLOCK_MARK, fragment)
+    blocks = (strip_tags(part) for part in marked.split(BLOCK_MARK))
+    return [b for b in blocks if b]
+
+
 def extract(raw):
-    """(title, [(text, id)...] заголовки, текст main) из сырого HTML."""
+    """(title, [{t, id}...] заголовки, [сегменты main]) из сырого HTML."""
     m = TITLE_RE.search(raw)
     title = strip_tags(m.group(1)) if m else ""
 
@@ -94,8 +117,10 @@ def extract(raw):
         idm = ID_RE.search(hm.group(2))
         headings.append({"t": text, "id": idm.group(1) if idm else ""})
 
-    body = strip_tags(main)
-    return title, headings, body
+    segments = []
+    for block in text_blocks(main):
+        segments.extend(split_sentences(block, SEG_LIMIT))
+    return title, headings, segments
 
 
 # ---------------------------------------------------------------------------
@@ -105,8 +130,10 @@ def extract(raw):
 class BeTranslator:
     def __init__(self, cache):
         self.cache = cache          # {исходный фрагмент: перевод}
+        self.used = set()           # какие ключи кэша нужны сайту сейчас
         self.requests = 0
-        self.failures = 0
+        self.failures = 0           # неудачные HTTP-запросы (с повторами)
+        self.unresolved = 0         # строки, которые так и остались русскими
 
     def _call(self, text, sl, tl):
         url = GTX_URL.format(
@@ -137,51 +164,30 @@ class BeTranslator:
         print("    ! перевод не удался: %s" % last_err)
         return None
 
-    def translate_chunks(self, text):
-        """Перевод длинного текста кусками по ~CHUNK_LIMIT символов."""
-        if not text:
-            return None
-        pieces = split_sentences(text, CHUNK_LIMIT)
-        out_pieces = []
-        failed = 0
-        for piece in pieces:
-            cached = self.cache.get(piece)
-            if cached is None:
-                cached = self._call(piece, "ru", "be")
-                if cached is None:
-                    failed += 1
-                    out_pieces.append(piece)  # оставляем русский кусок
-                    continue
-                self.cache[piece] = cached
-            out_pieces.append(cached)
-        if failed and failed == len(pieces):
-            return None  # вообще ничего не перевелось
-        return WS_RE.sub(" ", " ".join(out_pieces)).strip()
-
     def translate_lines(self, lines):
-        """Перевод списка строк (заголовки): батчами через "\\n".
-        Возвращает список той же длиности; при сбое строка остаётся русской."""
+        """Перевод списка строк батчами через "\\n".
+        Возвращает список той же длины; строка, которую не удалось
+        перевести, остаётся русской (и в кэш не попадает)."""
         if not lines:
             return []
         result = list(lines)
-        # кэшируемые сразу
         pending = []  # индексы строк без кэша
         for i, line in enumerate(lines):
             if not line:
                 continue
+            self.used.add(line)
             cached = self.cache.get(line)
             if cached is not None:
                 result[i] = cached
             else:
                 pending.append(i)
-        # батчи из незакэшированных
+
         batch, batch_idx = [], []
 
         def flush():
             if not batch:
                 return
-            joined = "\n".join(batch)
-            out = self._call(joined, "ru", "be")
+            out = self._call("\n".join(batch), "ru", "be")
             if out is not None:
                 parts = out.split("\n")
                 if len(parts) == len(batch):
@@ -191,18 +197,20 @@ class BeTranslator:
                     batch.clear()
                     batch_idx.clear()
                     return
-            # расхождение строк — переводим по одному
+            # расхождение строк или сбой — переводим по одной
             for i in list(batch_idx):
                 out1 = self._call(lines[i], "ru", "be")
                 if out1 is not None:
                     result[i] = out1
                     self.cache[lines[i]] = out1
+                else:
+                    self.unresolved += 1
             batch.clear()
             batch_idx.clear()
 
         for i in pending:
-            if len(batch) >= 25 or (
-                batch and len(batch) + len(lines[i]) > CHUNK_LIMIT
+            if len(batch) >= BATCH_LINES or (
+                batch and sum(len(s) for s in batch) + len(lines[i]) > BATCH_LIMIT
             ):
                 flush()
             batch.append(lines[i])
@@ -210,9 +218,17 @@ class BeTranslator:
         flush()
         return result
 
+    def prune_cache(self):
+        """Убирает из кэша переводы строк, которых больше нет на сайте."""
+        dropped = [k for k in self.cache if k not in self.used]
+        for key in dropped:
+            del self.cache[key]
+        return len(dropped)
+
 
 def split_sentences(text, limit):
-    """Разбивает текст на куски не длиннее limit по границам предложений."""
+    """Разбивает текст на куски не длиннее limit по границам предложений
+    (короткие предложения склеиваются, пока помещаются в limit)."""
     parts = re.split(r"(?<=[.!?;:])\s+", text)
     chunks, cur = [], ""
     for part in parts:
@@ -247,16 +263,43 @@ def load_be_cache():
 
 def save_be_cache(cache):
     with open(BE_CACHE_PATH, "w", encoding="utf-8", newline="\n") as fh:
-        json.dump(cache, fh, ensure_ascii=False, separators=(",", ":"))
+        json.dump(cache, fh, ensure_ascii=False, separators=(",", ":"),
+                  sort_keys=True)
 
 
 # ---------------------------------------------------------------------------
 
 
-def collect_pages(with_be=True, be_cache=None):
-    translator = BeTranslator(be_cache) if with_be else None
+def build_page(name, raw, translator):
+    """Страница индекса или None, если на ней нечего искать."""
+    title, headings, segments = extract(raw)
+    if not title and not segments:
+        return None
+    page = {"url": name, "title": title or name}
+
+    if translator is None:
+        page["headings"] = headings
+        page["segs"] = [[s] for s in segments]
+        return page
+
+    # Один вызов на страницу: [title] + заголовки + сегменты
+    sources = [page["title"]] + [h["t"] for h in headings] + segments
+    translated = translator.translate_lines(sources)
+    n_heads = len(headings)
+    page["titleBe"] = translated[0]
+    page["headings"] = [
+        {"t": h["t"], "b": translated[1 + i], "id": h["id"]}
+        for i, h in enumerate(headings)
+    ]
+    page["segs"] = [
+        [segments[i], translated[1 + n_heads + i]]
+        for i in range(len(segments))
+    ]
+    return page
+
+
+def collect_pages(translator):
     pages = []
-    be_ok = be_fail = 0
     for name in sorted(os.listdir(ROOT)):
         if not (name.endswith(".html") or name.endswith(".shtml")):
             continue
@@ -265,48 +308,21 @@ def collect_pages(with_be=True, be_cache=None):
             continue
         with open(path, "r", encoding="utf-8") as fh:
             raw = fh.read()
-        title, headings, body = extract(raw)
-        if not title and not body:
-            continue
-        page = {
-            "url": name,
-            "title": title or name,
-            "headings": headings,
-            "text": body,
-        }
-
-        if with_be:
+        if translator is not None:
             print("  be: %s" % name)
-            title_be = translator.translate_lines([page["title"]])[0]
-            heads_be = translator.translate_lines([h["t"] for h in headings])
-            text_be = translator.translate_chunks(body)
-            if text_be:
-                page["titleBe"] = title_be
-                page["headingsBe"] = [
-                    {"t": heads_be[i], "id": headings[i]["id"]}
-                    for i in range(len(headings))
-                ]
-                page["textBe"] = text_be
-                be_ok += 1
-            else:
-                be_fail += 1
-        pages.append(page)
-
-    if with_be:
-        print(
-            "BE: ok=%d, fail=%d, requests=%d, failures=%d, cache=%d"
-            % (be_ok, be_fail, translator.requests,
-               translator.failures, len(be_cache))
-        )
+        page = build_page(name, raw, translator)
+        if page is not None:
+            pages.append(page)
     return pages
 
 
 def main():
     with_be = "--no-be" not in sys.argv
     be_cache = load_be_cache() if with_be else None
+    translator = BeTranslator(be_cache) if with_be else None
 
     print("collecting pages%s..." % ("" if with_be else " (RU only)"))
-    pages = collect_pages(with_be=with_be, be_cache=be_cache)
+    pages = collect_pages(translator)
 
     data = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -315,26 +331,29 @@ def main():
     with open(OUT_PATH, "w", encoding="utf-8", newline="\n") as fh:
         json.dump(data, fh, ensure_ascii=False, separators=(",", ":"))
 
-    if with_be and be_cache is not None:
+    if translator is not None:
+        dropped = translator.prune_cache()
         save_be_cache(be_cache)
+        print(
+            "BE: requests=%d, failed requests=%d, untranslated=%d, "
+            "cache=%d (dropped stale: %d)"
+            % (translator.requests, translator.failures,
+               translator.unresolved, len(be_cache), dropped)
+        )
 
-    total_chars = sum(len(p["text"]) for p in pages)
-    be_chars = sum(len(p.get("textBe", "")) for p in pages)
+    n_segs = sum(len(p["segs"]) for p in pages)
     size_kb = os.path.getsize(OUT_PATH) / 1024
     print(
-        "pages: %d (be: %d), headings: %d, text chars: %d (be: %d), "
-        "file: %.1f KB"
-        % (
-            len(pages),
-            sum(1 for p in pages if "textBe" in p),
-            sum(len(p["headings"]) for p in pages),
-            total_chars,
-            be_chars,
-            size_kb,
-        )
+        "pages: %d, headings: %d, segments: %d, file: %.1f KB"
+        % (len(pages), sum(len(p["headings"]) for p in pages), n_segs, size_kb)
     )
     print("written: %s" % OUT_PATH)
 
+    if translator is not None and translator.unresolved:
+        print("WARNING: %d segments left untranslated" % translator.unresolved)
+        return EXIT_PARTIAL
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

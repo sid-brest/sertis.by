@@ -1,0 +1,58 @@
+name: Rebuild search index
+
+# Статьи пишутся только по-русски. При каждом push с изменёнными страницами
+# индекс поиска пересобирается: новые предложения переводятся на беларускую
+# мову (остальное берётся из search-index.be.cache.json), результат
+# коммитится обратно в main. Коммит сборщика не запускает workflow повторно:
+# он меняет только json-файлы, а push от GITHUB_TOKEN событий не порождает.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*.html"
+      - "*.shtml"
+      - "build-search-index.py"
+  workflow_dispatch: # ручной запуск из вкладки Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: search-index
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Сбой части переводов не должен терять уже переведённое:
+      # индекс всё равно коммитим, а задачу в конце помечаем красной.
+      - name: Build search index
+        id: build
+        continue-on-error: true
+        run: python build-search-index.py
+
+      - name: Commit updated index
+        run: |
+          if git diff --quiet -- search-index.json search-index.be.cache.json; then
+            echo "Index is up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add search-index.json search-index.be.cache.json
+          git commit -m "chore: rebuild search index [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Fail if some segments were not translated
+        if: steps.build.outcome == 'failure'
+        run: |
+          echo "::error::Not all segments were translated; re-run the workflow to retry"
+          exit 1
