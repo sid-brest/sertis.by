@@ -382,6 +382,7 @@ h6 {
   text-align: center;
 }
 
+#hero h1,
 #hero h2 {
   color: #fff;
   margin-bottom: 20px;
@@ -493,6 +494,7 @@ h6 {
 }
 
 @media (max-width: 768px) {
+  #hero h1,
   #hero h2 {
     font-size: 28px;
   }
@@ -569,6 +571,7 @@ section {
   margin-top: 80px;
 }
 
+.breadcrumbs h1,
 .breadcrumbs h2 {
   font-size: 32px;
   font-weight: 300;
@@ -603,6 +606,8 @@ section {
   .breadcrumbs .d-flex {
     display: block !important;
   }
+
+  .breadcrumbs h1,
 
   .breadcrumbs h2 {
     margin-bottom: 10px;
@@ -1240,6 +1245,29 @@ section {
   line-height: inherit;
   padding: 0;
   margin: 0;
+}
+
+/* Заголовки, оформленные «как ссылка», но без перехода (раньше href="javascript:void(0)"):
+   выглядят как ссылки, но не попадают в табуляцию и не обещают курсором переход */
+a.pseudo-link {
+  cursor: default;
+}
+
+/* Ссылка на документ со значком Word/PDF: значок «висит» слева, а текст,
+   даже перенесённый на вторую строку, остаётся ровным столбцом справа от него */
+a.doc-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  max-width: 100%;
+}
+
+a.doc-link > i[class*="bi-file-earmark"] {
+  flex: 0 0 auto;
+  float: none;
+  padding: 0;
+  margin: 0;
+  line-height: inherit;
 }
 
 .faq .faq-item h4 {

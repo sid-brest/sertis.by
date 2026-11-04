@@ -25,7 +25,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Всегда актуальный main, а не коммит события: если за время ожидания
+      # в очереди кто-то запушил ещё, индекс собирается по свежим страницам
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-python@v5
         with:
@@ -40,16 +44,32 @@ jobs:
 
       - name: Commit updated index
         run: |
-          if git diff --quiet -- search-index.json search-index.be.cache.json; then
-            echo "Index is up to date"
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add search-index.json search-index.be.cache.json
-          git commit -m "chore: rebuild search index [skip ci]"
-          git pull --rebase origin main
-          git push origin HEAD:main
+
+          # false, если индекс не изменился (коммитить нечего)
+          commit_index() {
+            git add search-index.json search-index.be.cache.json
+            git diff --cached --quiet && return 1
+            git commit -q -m "chore: rebuild search index [skip ci]"
+          }
+
+          commit_index || { echo "Index is up to date"; exit 0; }
+
+          # Если main успел уйти вперёд, не сливаем два минифицированных JSON
+          # (это даёт конфликт), а пересобираем индекс поверх свежего main.
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt): main moved, rebuilding on top of it"
+            git fetch origin main
+            git reset --hard origin/main
+            python build-search-index.py || true
+            commit_index || { echo "Index is up to date"; exit 0; }
+          done
+          echo "::error::Could not push the rebuilt index"
+          exit 1
 
       - name: Fail if some segments were not translated
         if: steps.build.outcome == 'failure'

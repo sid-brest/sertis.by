@@ -270,6 +270,15 @@ def save_be_cache(cache):
 # ---------------------------------------------------------------------------
 
 
+def pages_unchanged(pages):
+    """True, если уже записанный индекс содержит ровно такие же страницы."""
+    try:
+        with open(OUT_PATH, "r", encoding="utf-8") as fh:
+            return json.load(fh).get("pages") == pages
+    except (OSError, ValueError, AttributeError):
+        return False
+
+
 def build_page(name, raw, translator):
     """Страница индекса или None, если на ней нечего искать."""
     title, headings, segments = extract(raw)
@@ -324,12 +333,17 @@ def main():
     print("collecting pages%s..." % ("" if with_be else " (RU only)"))
     pages = collect_pages(translator)
 
-    data = {
-        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "pages": pages,
-    }
-    with open(OUT_PATH, "w", encoding="utf-8", newline="\n") as fh:
-        json.dump(data, fh, ensure_ascii=False, separators=(",", ":"))
+    # Метка времени не должна сама по себе порождать коммит: файл
+    # перезаписывается, только если изменились страницы
+    if pages_unchanged(pages):
+        print("index content unchanged - %s left as is" % OUT_PATH)
+    else:
+        data = {
+            "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "pages": pages,
+        }
+        with open(OUT_PATH, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(data, fh, ensure_ascii=False, separators=(",", ":"))
 
     if translator is not None:
         dropped = translator.prune_cache()

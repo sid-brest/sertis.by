@@ -28,7 +28,16 @@
   background: rgba(102, 12, 0, 0.08);
   border-color: rgba(102, 12, 0, 0.6);
   color: #660c00;
-  outline: none;
+}
+
+/* Видимый индикатор фокуса для клавиатуры */
+.header-search-btn:focus-visible,
+.search-modal__clear:focus-visible,
+.search-modal__close:focus-visible,
+.search-result__link:focus-visible,
+.search-result.is-active .search-result__link {
+  outline: 2px solid #660c00;
+  outline-offset: -2px;
 }
 
 /* --- Модальное окно --- */
@@ -114,7 +123,6 @@
 .search-modal__clear:focus-visible {
   background: rgba(102, 12, 0, 0.08);
   color: #660c00;
-  outline: none;
 }
 
 .search-modal__close {
@@ -133,7 +141,6 @@
 .search-modal__close:focus-visible {
   background: rgba(102, 12, 0, 0.08);
   color: #660c00;
-  outline: none;
 }
 
 /* Статус: «Найдено N», «Введите запрос», «Ничего не найдено» */
@@ -166,7 +173,6 @@
 .search-result__link:focus-visible,
 .search-result.is-active .search-result__link {
   background: rgba(102, 12, 0, 0.07);
-  outline: none;
 }
 
 .search-result__title {

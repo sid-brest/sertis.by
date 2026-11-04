@@ -13,7 +13,9 @@
 (function () {
   "use strict";
 
-  var INDEX_URL = "search-index.json";
+  // От корня сайта: страницы ошибок могут отдаваться с вложенного URL
+  var INDEX_URL = "/search-index.json";
+  var MAX_WORDS = 8; // больше слов из запроса / ?find= не учитываем
   var MIN_CHARS = 2; // минимум символов для запроса
   var DEBOUNCE_MS = 60; // пауза перед поиском после ввода
   var MAX_RESULTS = 20; // максимум результатов
@@ -129,7 +131,7 @@
   }
 
   function queryWords(q) {
-    return norm(q).split(/\s+/).filter(Boolean);
+    return norm(q).split(/\s+/).filter(Boolean).slice(0, MAX_WORDS);
   }
 
   /* ------------------------- индекс ------------------------- */
@@ -270,7 +272,8 @@
   }
 
   function searchWords(words) {
-    if (!words.length) return [];
+    // индекс ещё грузится (или не загрузился): искать пока негде
+    if (!pages || !words.length) return [];
 
     var modeBe = isBeMode();
     var hits = [];
@@ -396,6 +399,12 @@
     var t = ui();
     var showBe = isBeMode();
 
+    // индекс ещё грузится: результаты появятся, когда openModal его дождётся
+    if (!pages) {
+      setStatus(t.loading);
+      return;
+    }
+
     if (!words.length) {
       currentHits = [];
       resultsEl.innerHTML = "";
@@ -405,6 +414,7 @@
 
     currentHits = searchWords(words);
     activeIdx = -1;
+    input.removeAttribute("aria-activedescendant");
 
     if (!currentHits.length) {
       resultsEl.innerHTML =
@@ -423,6 +433,7 @@
       // ?find — слова запроса, чтобы страница нашла и подсветила место
       // совпадения; &sec — запасной якорь (если find не сработал)
       var href =
+        "/" +
         page.url +
         "?find=" +
         encodeURIComponent(words.join(" ")) +
@@ -504,6 +515,7 @@
     );
 
     input.addEventListener("keydown", onInputKey);
+    modal.addEventListener("keydown", trapTab);
 
     // Кнопка-«веник»: очищает поле запроса (видна, только когда есть текст)
     var clearBtn = modal.querySelector("#searchClear");
@@ -584,7 +596,30 @@
     var el = items[activeIdx];
     el.classList.add("is-active");
     el.setAttribute("aria-selected", "true");
+    // фокус остаётся в поле — скринридеру сообщаем активный результат
+    input.setAttribute("aria-activedescendant", el.id);
     el.scrollIntoView({ block: "nearest" });
+  }
+
+  // Фокус не уходит из окна поиска на страницу под ним
+  function trapTab(e) {
+    if (e.key !== "Tab") return;
+    var focusable = Array.prototype.filter.call(
+      modal.querySelectorAll("input, button"),
+      function (el) {
+        return !el.hidden && !el.disabled;
+      }
+    );
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   }
 
   function openActive() {
@@ -727,7 +762,7 @@
       if (lowerJoined.indexOf(words[i]) < 0) return null;
     }
 
-    var first = null;
+    var created = [];
     var count = 0;
     for (var n = 0; n < nodes.length && count < MAX_MARKS; n++) {
       var node = nodes[n];
@@ -747,7 +782,7 @@
         wrap.className = "search-hit";
         wrap.textContent = text.slice(ranges[r][0], ranges[r][1]);
         frag.appendChild(wrap);
-        if (!first) first = wrap;
+        created.push(wrap);
         cursor = ranges[r][1];
         count++;
       }
@@ -756,7 +791,12 @@
       }
       node.parentNode.replaceChild(frag, node);
     }
-    return first;
+    if (!created.length) return null;
+    // скроллим к первой видимой метке (совпадение может быть в свёрнутом блоке)
+    var visible = created.filter(function (m) {
+      return m.getClientRects().length > 0;
+    });
+    return visible.length ? visible[0] : created[0];
   }
 
   function scrollToMark(el) {
