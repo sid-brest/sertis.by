@@ -538,7 +538,7 @@ section {
   margin: 0 0 5px 0;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #aaaaaa;
+  color: #757575;
   font-family: "Poppins", sans-serif;
 }
 
@@ -1924,7 +1924,7 @@ a.doc-link > i[class*="bi-file-earmark"] {
 
 .blog .sidebar .categories ul a span {
   padding-left: 5px;
-  color: #aaaaaa;
+  color: #757575;
   font-size: 14px;
 }
 
@@ -1957,7 +1957,7 @@ a.doc-link > i[class*="bi-file-earmark"] {
   margin-left: 95px;
   font-style: italic;
   font-size: 14px;
-  color: #aaaaaa;
+  color: #757575;
 }
 
 .blog .sidebar .tags {
@@ -2071,7 +2071,7 @@ a.doc-link > i[class*="bi-file-earmark"] {
 
 #footer .footer-top .footer-links ul i {
   padding-right: 2px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 18px;
   line-height: 1;
 }
@@ -2087,7 +2087,7 @@ a.doc-link > i[class*="bi-file-earmark"] {
 }
 
 #footer .footer-top .footer-links ul a {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.8);
   transition: 0.3s;
   display: inline-block;
   line-height: 1;
@@ -2139,11 +2139,11 @@ a.doc-link > i[class*="bi-file-earmark"] {
   padding-top: 10px;
   text-align: center;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 #footer .credits a {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.8);
   transition: 0.3s;
   font-weight: 600;
 }

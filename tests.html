@@ -67,7 +67,7 @@
     </script>
     <noscript>
       <div>
-        <img
+        <img loading="lazy" decoding="async"
           src="https://mc.yandex.ru/watch/68353321"
           style="position: absolute; left: -9999px"
           alt=""
@@ -83,6 +83,8 @@
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
 
     <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
       rel="stylesheet"
@@ -356,7 +358,7 @@
             </script>
           </ul>
 
-          <i class="bi bi-list mobile-nav-toggle"></i>
+          <i class="bi bi-list mobile-nav-toggle" role="button" tabindex="0" aria-label="Меню" aria-controls="navbar" aria-expanded="false"></i>
         </nav>
 
         <!-- ====== ПОИСК ПО САЙТУ ====== -->

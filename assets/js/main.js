@@ -70,9 +70,18 @@
    * Mobile nav toggle
    */
   on("click", ".mobile-nav-toggle", function (e) {
-    select("#navbar").classList.toggle("navbar-mobile");
+    var isOpen = select("#navbar").classList.toggle("navbar-mobile");
     this.classList.toggle("bi-list");
     this.classList.toggle("bi-x");
+    this.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  // Кнопка меню — <i role="button">: Enter и Пробел работают как клик
+  on("keydown", ".mobile-nav-toggle", function (e) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      this.click();
+    }
   });
 
   /**
