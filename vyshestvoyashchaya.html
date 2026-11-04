@@ -97,6 +97,7 @@
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/search.css" rel="stylesheet" />
 
     <style>
       .logos-container {
@@ -114,7 +115,7 @@
         color: #556270;
         margin-bottom: 18px;
         padding-bottom: 10px;
-        border-bottom: 2px solid #d9232d;
+        border-bottom: 2px solid #660c00;
       }
       .section-content p {
         font-size: 15px;
@@ -161,7 +162,7 @@
         gap: 10px;
         background: #f8f9fa;
         border: 1px solid #dee2e6;
-        border-left: 4px solid #d9232d;
+        border-left: 4px solid #660c00;
         border-radius: 6px;
         padding: 12px 18px;
         margin: 12px 0;
@@ -173,13 +174,13 @@
         display: flex;
       }
       .doc-link-block:hover {
-        background: #fff0f0;
-        color: #d9232d;
+        background: #f6f0f0;
+        color: #660c00;
         text-decoration: none;
       }
       .doc-link-block i {
         font-size: 22px;
-        color: #d9232d;
+        color: #660c00;
         flex-shrink: 0;
       }
 
@@ -187,7 +188,7 @@
       .lang-switcher {
         display: inline-flex;
         align-items: center;
-        border: 1.5px solid rgba(213, 35, 45, 0.35);
+        border: 1.5px solid rgba(102, 12, 0, 0.35);
         border-radius: 4px;
         overflow: hidden;
         margin-left: 14px;
@@ -212,17 +213,17 @@
         text-transform: uppercase;
       }
       .lang-switcher__btn:hover {
-        background: rgba(213, 35, 45, 0.08);
-        color: #d9232d;
+        background: rgba(102, 12, 0, 0.08);
+        color: #660c00;
       }
       .lang-switcher__btn.active {
-        background: #d9232d;
+        background: #660c00;
         color: #fff;
       }
       .lang-switcher__divider {
         width: 1px;
         height: 18px;
-        background: rgba(213, 35, 45, 0.3);
+        background: rgba(102, 12, 0, 0.3);
         flex-shrink: 0;
       }
 
@@ -402,6 +403,17 @@
           </ul>
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
+
+        <!-- ====== ПОИСК ПО САЙТУ ====== -->
+        <button
+          type="button"
+          class="header-search-btn"
+          id="headerSearchBtn"
+          aria-label="Поиск по сайту"
+          title="Поиск по сайту (Ctrl+K)"
+        >
+          <i class="bi bi-search" aria-hidden="true"></i>
+        </button>
 
         <!-- ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== -->
         <div
@@ -665,6 +677,7 @@
       <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
       <script src="assets/vendor/php-email-form/validate.js"></script>
       <script src="assets/js/main.js"></script>
+      <script src="assets/js/search.js"></script>
     </footer>
 
     <!-- ====== СКРИПТ ПЕРЕКЛЮЧАТЕЛЯ ЯЗЫКА ====== -->

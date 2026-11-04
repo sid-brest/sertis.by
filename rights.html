@@ -101,6 +101,7 @@
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/search.css" rel="stylesheet" />
 
     <!-- Custom styles for second logo -->
     <style>
@@ -128,7 +129,7 @@
       .lang-switcher {
         display: inline-flex;
         align-items: center;
-        border: 1.5px solid rgba(213, 35, 45, 0.35);
+        border: 1.5px solid rgba(102, 12, 0, 0.35);
         border-radius: 4px;
         overflow: hidden;
         margin-left: 14px;
@@ -151,17 +152,17 @@
         text-transform: uppercase;
       }
       .lang-switcher__btn:hover {
-        background: rgba(213, 35, 45, 0.08);
-        color: #d9232d;
+        background: rgba(102, 12, 0, 0.08);
+        color: #660c00;
       }
       .lang-switcher__btn.active {
-        background: #d9232d;
+        background: #660c00;
         color: #fff;
       }
       .lang-switcher__divider {
         width: 1px;
         height: 18px;
-        background: rgba(213, 35, 45, 0.3);
+        background: rgba(102, 12, 0, 0.3);
         flex-shrink: 0;
       }
 
@@ -346,6 +347,17 @@
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
 
+        <!-- ====== ПОИСК ПО САЙТУ ====== -->
+        <button
+          type="button"
+          class="header-search-btn"
+          id="headerSearchBtn"
+          aria-label="Поиск по сайту"
+          title="Поиск по сайту (Ctrl+K)"
+        >
+          <i class="bi bi-search" aria-hidden="true"></i>
+        </button>
+
         <!-- ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== -->
         <div
           class="lang-switcher"
@@ -439,10 +451,6 @@
                   согласии с основными условиями предстоящей сертификации;
                 </li>
                 <li>
-                  Подавать в орган по сертификации в устной либо письменной
-                  форме заявление о выдаче сертификата;
-                </li>
-                <li>
                   Обжаловать в вышестоящую по отношению к органу по сертификации
                   организацию (при ее наличии) и (или) в орган по аккредитации
                   решения и (или) действия (бездействие) органа по сертификации,
@@ -522,8 +530,7 @@
                   Подавать в орган по сертификации в письменной форме заявления
                   о внесении изменений и (или) дополнений в сертификат
                   соответствия, выдаче дубликата сертификата, прекращении
-                  действия сертификата, а также в устной либо письменной форме
-                  заявление о выдаче сертификата при повторной сертификации;
+                  действия сертификата;
                 </li>
                 <li>
                   Применять иные знаки соответствия Национальной системы
@@ -636,7 +643,7 @@
                   сертификате соответствия;
                 </li>
                 <li>
-                  исполнять иные обязанности в соответствии с Законом Республики
+                  Исполнять иные обязанности в соответствии с Законом Республики
                   Беларусь от 24.10.2016 № 437-З «Об оценке соответствия
                   техническим требованиям и аккредитации органов по оценке
                   соответствия», правилами подтверждения соответствия, иными
@@ -648,16 +655,15 @@
                   работ по сертификации, договором на выполнение работ по
                   проведению периодической оценки сертифицированного объекта.
                 </li>
+                <li>
+                  Вести записи обо всех жалобах, ставших ему известными, которые
+                  касаются соблюдения требований сертификации, предоставляет эти
+                  записи органу по сертификации в срок, не превышающий трех
+                  рабочих дней с момента выявления нарушения, и уведомляет орган
+                  по сертификации для необходимости принятия решения в отношении
+                  сертификата соответствия
+                </li>
               </ul>
-              <p>
-                При выявлении фактов предоставления недостоверной информации об
-                органе по сертификации, случаев неправомерного использования
-                сертификата соответствия, знака соответствия, орган по
-                сертификации приостанавливает или отменяет (прекращает) действие
-                сертификата соответствия. Ответственность за нарушение
-                законодательства об оценке соответствия предусмотрена ст. 23.11
-                Кодекса Республики Беларусь об административных правонарушениях.
-              </p>
             </div>
           </div>
           <!-- End F.A.Q Item-->
@@ -996,6 +1002,7 @@
 
       <!-- Template Main JS File -->
       <script src="assets/js/main.js"></script>
+      <script src="assets/js/search.js"></script>
       <!-- <script src="https://app.embed.im/snow.js" defer></script> -->
     </footer>
     <!-- Cookie Consent Banner -->
@@ -1084,7 +1091,7 @@
       <div style="${containerStyle}">
         <p style="margin: 0; font-size: 14px; line-height: 1.4;">Этот сайт использует файлы cookie для корректной работы.</p>
         <div style="${buttonsStyle}">
-          <button id="acceptCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #d9232d; color: white;">Принять</button>
+          <button id="acceptCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #660c00; color: white;">Принять</button>
           <button id="declineCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #6c757d; color: white;">Отказаться</button>
         </div>
       </div>

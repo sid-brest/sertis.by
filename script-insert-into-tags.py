@@ -92,7 +92,7 @@ code_to_insert = """    <!-- Cookie Consent Banner -->
       <div style="${containerStyle}">
         <p style="margin: 0; font-size: 14px; line-height: 1.4;">Этот сайт использует файлы cookie для корректной работы.</p>
         <div style="${buttonsStyle}">
-          <button id="acceptCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #d9232d; color: white;">Принять</button>
+          <button id="acceptCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #660c00; color: white;">Принять</button>
           <button id="declineCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #6c757d; color: white;">Отказаться</button>
         </div>
       </div>

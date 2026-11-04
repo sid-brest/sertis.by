@@ -101,6 +101,7 @@
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/search.css" rel="stylesheet" />
 
     <!-- Custom styles for second logo -->
     <style>
@@ -128,7 +129,7 @@
       .lang-switcher {
         display: inline-flex;
         align-items: center;
-        border: 1.5px solid rgba(213, 35, 45, 0.35);
+        border: 1.5px solid rgba(102, 12, 0, 0.35);
         border-radius: 4px;
         overflow: hidden;
         margin-left: 14px;
@@ -151,17 +152,17 @@
         text-transform: uppercase;
       }
       .lang-switcher__btn:hover {
-        background: rgba(213, 35, 45, 0.08);
-        color: #d9232d;
+        background: rgba(102, 12, 0, 0.08);
+        color: #660c00;
       }
       .lang-switcher__btn.active {
-        background: #d9232d;
+        background: #660c00;
         color: #fff;
       }
       .lang-switcher__divider {
         width: 1px;
         height: 18px;
-        background: rgba(213, 35, 45, 0.3);
+        background: rgba(102, 12, 0, 0.3);
         flex-shrink: 0;
       }
 
@@ -346,6 +347,17 @@
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
 
+        <!-- ====== ПОИСК ПО САЙТУ ====== -->
+        <button
+          type="button"
+          class="header-search-btn"
+          id="headerSearchBtn"
+          aria-label="Поиск по сайту"
+          title="Поиск по сайту (Ctrl+K)"
+        >
+          <i class="bi bi-search" aria-hidden="true"></i>
+        </button>
+
         <!-- ====== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ====== -->
         <div
           class="lang-switcher"
@@ -447,47 +459,46 @@
                 <h2></h2>
               </div>
               <p>
-                Организация по освидетельствованию системы производственного
-                контроля РУП "Сертис" РУП "Белстройцентр" по просьбе Заказчика
-                предоставляет раздаточный материал для подготовки документов к
-                освидетельствованию системы производственного контроля.
-                Обращайтесь по телефонам: +375162556868, +375297782476,
-                +375298900496 или отправляйте запрос на наш электронный адрес
-                mail@sertis.by
+                Уполномоченная организация РУП "Сертис" РУП "Белстройцентр" по
+                просьбе Заказчика предоставляет раздаточный материал для
+                подготовки документов к освидетельствованию системы
+                производственного контроля. Обращайтесь по телефонам:
+                +375162556868, +375297782476, +375298900496 или отправляйте
+                запрос на наш электронный адрес:
+                <a href="mailto:mail@sertis.by">mail@sertis.by</a>.
               </p>
               <p>
-                С 11 марта 2026 года в Республике Беларусь новый порядок
-                освидетельствования системы производственного контроля (далее -
-                СПК).
+                С 11 марта 2026 года в Республике Беларусь принят новый порядок
+                освидетельствования СПК.
               </p>
               <p>
                 Юридические лица и индивидуальные предприниматели, которые
                 выполняют работы, оказывают услуги в строительстве на объектах
-                первого-четвертого классов сложности; производят НЕ ПОДЛЕЖАЩИЕ
-                ОБЯЗАТЕЛЬНОМУ ПОДТВЕРЖДЕНИЮ СООТВЕТСТВИЯ строительные материалы,
-                строительные изделия, строительные конструкции (далее -
-                строительная продукция) обязаны создать СПК до начала
+                первого-четвертого классов сложности и (или) производят НЕ
+                ПОДЛЕЖАЩИЕ ОБЯЗАТЕЛЬНОМУ ПОДТВЕРЖДЕНИЮ СООТВЕТСТВИЯ строительные
+                материалы, строительные изделия, строительные конструкции
+                (далее - строительная продукция) обязаны создать СПК до начала
                 строительства на объектах первого-четвертого классов сложности
                 и (или) производства строительной продукции и пройти процедуру
                 освидетельствования СПК, по положительным результатам которого
                 выдается свидетельство о технической компетентности СПК
                 (Статья 43 Кодекса Республики Беларусь об архитектурной,
-                градостроительной и строительной деятельности)
+                градостроительной и строительной деятельности).
               </p>
               <p>
-                Порядок освидетельствования системы производственного контроля
-                утвержден постановлением Министерства архитектуры и
-                строительства Республики Беларусь от 21.11.2025 № 136 «Об
-                освидетельствовании системы производственного контроля».
+                Порядок освидетельствования СПК утвержден постановлением
+                Министерства архитектуры и строительства Республики Беларусь от
+                21.11.2025 № 136 «Об освидетельствовании системы
+                производственного контроля».
               </p>
               <p>
                 Новый реестр свидетельств о технической компетентности СПК в
                 онлайн-режиме с регистрацией свидетельств день-в-день с областью
-                технической компетентности, доступной к просмотру на сайте РУП
-                «БЕЛСТРОЙЦЕНТР»
+                технической компетентности, доступной к просмотру, размещен на
+                сайте РУП «БЕЛСТРОЙЦЕНТР»
                 <a href="https://spk.bsc.by/cert_register" target="_blank"
                   >https://spk.bsc.by/cert_register</a
-                >
+                >.
               </p>
             </div>
           </div>
@@ -677,6 +688,7 @@
 
       <!-- Template Main JS File -->
       <script src="assets/js/main.js"></script>
+      <script src="assets/js/search.js"></script>
       <!-- <script src="https://app.embed.im/snow.js" defer></script> -->
     </footer>
     <!-- Cookie Consent Banner -->
@@ -765,7 +777,7 @@
       <div style="${containerStyle}">
         <p style="margin: 0; font-size: 14px; line-height: 1.4;">Этот сайт использует файлы cookie для корректной работы.</p>
         <div style="${buttonsStyle}">
-          <button id="acceptCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #d9232d; color: white;">Принять</button>
+          <button id="acceptCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #660c00; color: white;">Принять</button>
           <button id="declineCookiesBtn" style="min-width: 120px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; height: 40px; box-sizing: border-box; background: #6c757d; color: white;">Отказаться</button>
         </div>
       </div>
